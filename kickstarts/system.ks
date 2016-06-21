@@ -152,9 +152,9 @@ part swap --fstype="swap" --recommended --ondisk=$swapDisk
 part swap --fstype="swap" --recommended
 #end if
 #if $getVar('$rootDisk','') != ''
-part / --fstype="$getVar('$rootPartition', 'ext3')" --size=$getVar('rootPartitionSize', '1024') --recommended --grow --ondisk=$rootDisk
+part / --fstype="$getVar('$rootPartition', 'xfs')" --size=$getVar('rootPartitionSize', '1024') --recommended --grow --ondisk=$rootDisk
 #else
-part / --fstype="$getVar('$rootPartition', 'ext3')" --size=$getVar('rootPartitionSize', '1024') --recommended --grow
+part / --fstype="$getVar('$rootPartition', 'xfs')" --size=$getVar('rootPartitionSize', '1024') --recommended --grow
 #end if
 #end if
 
