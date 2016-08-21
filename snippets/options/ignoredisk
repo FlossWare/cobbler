@@ -1,0 +1,2 @@
+#set $ignoredisk=$getVar('ignoredisk', '') and ('ignoredisk ' + $getVar('ignoredisk')) or ''
+$ignoredisk

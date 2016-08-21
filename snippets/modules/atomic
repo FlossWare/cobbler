@@ -1,0 +1,4 @@
+$SNIPPET('flossware/options/ostreesetup')
+
+#set global services = '--disabled="cloud-init,cloud-config,cloud-final,cloud-init-local"'
+$SNIPPET('flossware/options/services')

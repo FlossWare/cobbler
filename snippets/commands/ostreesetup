@@ -1,0 +1,2 @@
+# OSTree setup
+ostreesetup $getVar('ostreesetup', '')

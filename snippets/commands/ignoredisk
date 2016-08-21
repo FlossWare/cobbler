@@ -1,0 +1,2 @@
+#set $ignoreDisk=$getVar('ignoreDisk', '') and ('ignoredisk --drives=' + $getVar('ignoreDisk')) or ''
+$ignoreDisk

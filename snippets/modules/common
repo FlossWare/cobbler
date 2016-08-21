@@ -1,0 +1,25 @@
+# Use text mode install
+text
+
+# Do not configure the X Window System
+skipx
+
+# Install OS instead of upgrade
+install
+
+$SNIPPET('flossware/options/auth')
+$SNIPPET('flossware/options/completion_method')
+$SNIPPET('flossware/options/firewall')
+$SNIPPET('flossware/options/firstboot')
+$SNIPPET('flossware/options/keyboard')
+$SNIPPET('flossware/options/lang')
+$SNIPPET('flossware/options/timezone')
+$SNIPPET('flossware/options/logging')
+$SNIPPET('flossware/options/url')
+$SNIPPET('flossware/options/selinux')
+$SNIPPET('flossware/options/rootpw')
+$SNIPPET('flossware/options/network')
+$SNIPPET('flossware/modules/filesystem')
+
+# If any cobbler repo definitions were referenced in the kickstart profile, include them here.
+$yum_repo_stanza

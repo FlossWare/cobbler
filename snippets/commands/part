@@ -1,0 +1,2 @@
+#set partitions=$getVar('diskPartitions', '') and ('part ' + $getVar('diskPartitions')) or ''
+$partitions

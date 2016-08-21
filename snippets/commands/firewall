@@ -1,0 +1,2 @@
+# Firewall configuration
+firewall --$getVar('$firewall', 'disabled')

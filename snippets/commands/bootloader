@@ -1,0 +1,2 @@
+# System bootloader configuration
+bootloader --location=$getVar('bootloader', 'mbr')

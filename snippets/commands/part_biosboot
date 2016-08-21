@@ -1,0 +1,2 @@
+#set biosbootPart=$getVar('biosbootPartitionSize', '') and ('part biosboot --fstype=biosboot --size=' + $getVar('biosbootPartitionSize')) or ''
+$biosbootPart

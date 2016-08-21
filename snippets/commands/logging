@@ -1,0 +1,2 @@
+# Installation logging level
+logging --level=$getVar('loggingLevel', 'debug')

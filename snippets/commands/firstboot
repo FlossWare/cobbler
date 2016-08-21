@@ -1,0 +1,2 @@
+# Run the Setup Agent on first boot
+firstboot --$getVar('$firstboot', 'disable')

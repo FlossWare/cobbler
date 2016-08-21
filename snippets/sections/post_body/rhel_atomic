@@ -1,0 +1,1 @@
+rm -f /etc/ostree/remotes.d/rhel-atomic-host.conf

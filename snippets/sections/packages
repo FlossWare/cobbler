@@ -1,0 +1,7 @@
+#set packageEnd = {'rhel1' : '', 'rhel2' : '', 'rhel3' : '', 'rhel4' : '', 'rhel5' : ''}.get($os_version, '%end')
+
+%packages
+@core
+$getVar('$packages', '').replace(',', '\\n').replace(' ', '\\n')
+$packageEnd
+

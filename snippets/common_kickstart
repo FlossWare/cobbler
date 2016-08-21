@@ -1,0 +1,2 @@
+#set global operatingSystemVersion = $os_version.replace('rhel', '').replace('fedora', '')
+$SNIPPET('flossware/modules/common')

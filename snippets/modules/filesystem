@@ -1,0 +1,5 @@
+$SNIPPET('flossware/options/zerombr')
+$SNIPPET('flossware/options/ignoredisk')
+$SNIPPET('flossware/options/bootloader')
+
+$SNIPPET('flossware/modules/disk_partition')

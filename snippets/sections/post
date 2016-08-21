@@ -1,0 +1,11 @@
+%post $getVar('post', '')
+$SNIPPET($post_body)
+
+/sbin/chkconfig --add network
+/sbin/chkconfig network on
+
+/sbin/chkconfig --add sshd
+/sbin/chkconfig sshd on
+
+$SNIPPET('kickstart_done') 
+%end

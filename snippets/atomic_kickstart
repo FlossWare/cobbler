@@ -1,0 +1,5 @@
+$SNIPPET('flossware/common_kickstart')
+$SNIPPET('flossware/modules/atomic')
+
+#set global post = '--erroronfail'
+$SNIPPET('flossware/sections/post')

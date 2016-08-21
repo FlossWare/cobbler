@@ -1,0 +1,2 @@
+#set $services = $getVar('services', '') != '' and ('services ' + $getVar('services')) or ''
+$services

@@ -1,0 +1,4 @@
+$SNIPPET('flossware/options/clearpart')
+
+#set disk_partition_snippet = $getVar('autopart', '') and ('flossware/options/autopart') or ('flossware/modules/defined_disk_partition')
+$SNIPPET($disk_partition_snippet)

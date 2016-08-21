@@ -1,0 +1,4 @@
+#set $completion = $getVar('completionMethod', 'reboot')
+
+# Do we poweroff, reboot, or shutdown after installation
+$completion
