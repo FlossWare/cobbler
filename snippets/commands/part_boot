@@ -1,2 +1,0 @@
-#set onDiskParam=$getVar('bootDisk', '') and ('--ondisk=' + $getVar('bootDisk')) or ''
-part boot --fstype="$getVar('bootPartition', 'ext3')" --recommended --size=$getVar('bootPartitionSize', '250') $onDiskParam

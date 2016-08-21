@@ -1,6 +1,0 @@
-
-#set networkOptions = $getVar('network', '') != '' and ($getVar('network')) or ('--hostname=' + $hostname + ' --bootproto=dhcp --device=' + $getVar('networkDevice', 'eth0'))
-
-# Define networking
-network $networkOptions 
-

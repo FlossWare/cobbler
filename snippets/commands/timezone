@@ -1,2 +1,0 @@
-# System timezone
-timezone  $getVar('timezone', 'America/New_York')

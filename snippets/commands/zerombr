@@ -1,2 +1,0 @@
-#set $zeroMbr = $getVar('noZeroMbr', '') != '' and ' ' or 'zerombr'
-$zeroMbr

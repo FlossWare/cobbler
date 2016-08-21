@@ -1,2 +1,0 @@
-# System language
-lang $getVar('$lang', 'en_US')

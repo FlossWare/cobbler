@@ -1,5 +1,4 @@
-#
-#set allLvmDisks = $getVar('lvmDisks', '') != '' and $getVar('lvmDisks').split(',') or []
+#set allLvmDisks = $getVar('lvmDisks', '') != '' and $getVar('lvmDisks').split(',').split(' ') or []
 #set allPv = ''
 #set pv = 1
 #for $anLvmDisk in $allLvmDisks

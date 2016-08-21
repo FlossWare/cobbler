@@ -1,6 +1,0 @@
-#set unencryptedPasswordOptions = {'rhel1':'', 'rhel2':'', 'rhel3':'', 'rhel4': '', 'rhel5':''}
-
-#set rootpwOptions = $getVar('encryptedRootPassword', '') != '' and ('--iscrypted ' + $getVar('encryptedRootPassword')) or ($unencryptedPasswordOptions.get($os_version, '--plaintext') + " " + $getVar('rootPassword', 'cobbler'))
-
-# Define root credentials
-rootpw $rootpwOptions
