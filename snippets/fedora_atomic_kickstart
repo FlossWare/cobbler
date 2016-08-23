@@ -1,8 +1,8 @@
-$SNIPPET('flossware/common_kickstart')
+$SNIPPET('flossware/modules/common')
 
 #set global post_body = 'flossware/sections/post_body/fedora_atomic'
 #set global ostreesetup = '--osname="fedora-atomic" --remote="fedora-atomic" --url="' + $tree + '/content/repo" --ref="fedora-atomic/f' + $operatingSystemVersion + '/x86_64/docker-host" --nogpg'
-$SNIPPET('flossware/atomic_kickstart')
+$SNIPPET('flossware/modules/atomic')
 
 #set global addon_option = "com_redhat_kdump --disable --reserve-mb='128'"
 #set global addon_body = 'flossware/sections/addon_body/fedora_atomic'

@@ -1,3 +1,5 @@
+#set global operatingSystemVersion = $os_version.replace('rhel', '').replace('fedora', '')
+
 # Use text mode install
 text
 
