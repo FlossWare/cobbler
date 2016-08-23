@@ -45,7 +45,7 @@ ksmeta='lang="en_US"'
 This will result in the kickstart to:
 
 ```bash
-lang="en_US"
+lang en_US
 ```
 
 #### Modules
