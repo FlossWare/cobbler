@@ -57,7 +57,7 @@ lang en_US
 * [disk_partition](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/disk_partition): "common" disk partitioning snippets.  If [autopart](https://github.com/FlossWare/cobbler/blob/master/snippets/options/autopart) is a ```ksmeta``` variable, it will use that [option](https://github.com/FlossWare/cobbler/tree/master/snippets/options) otherwise it will use use the [defined_disk_partition snippet](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/defined_disk_partition).  
 * [filesystem](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/filesystem): "common" file system snippet for [zerombr](https://github.com/FlossWare/cobbler/blob/master/snippets/options/zerombr), [ignoredisk](https://github.com/FlossWare/cobbler/blob/master/snippets/options/ignoredisk) and [bootloader](https://github.com/FlossWare/cobbler/blob/master/snippets/options/bootloader) options as well as calling the [disk_partition snippet](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/disk_partition).
 
-**Please note we are investigating using [Cheetah defs](http://pythonhosted.org/Cheetah/users_guide/inheritanceEtc.html#def), per issue #18, as a replacement for modules.***
+*Please note we are investigating using [Cheetah defs](http://pythonhosted.org/Cheetah/users_guide/inheritanceEtc.html#def), per [issue #18](https://github.com/FlossWare/cobbler/issues/18), as a replacement for modules.*
 
 #### Sections
 
