@@ -78,7 +78,21 @@ Clone this git repo and:
 
 #### Yum 
 
-TBD
+To yum install, you will need to enable the FlossWare cobbler yum repo by performing one of the following:
+
+* Get the repo file:  ```wget https://bintray.com/flossware/rpm/rpm -O bintray-flossware-rpm.repo```
+* Create the ```/etc/yum.repos.d/bintray-flossware-rpm.repo`` file as:
+```
+#bintraybintray-flossware-rpm - packages by flossware from Bintray
+[bintraybintray-flossware-rpm]
+name=bintray-flossware-rpm
+baseurl=https://dl.bintray.com/flossware/rpm
+gpgcheck=0
+repo_gpgcheck=0
+enabled=1
+```
+
+Once the repo file exists, execute:  ```yum install flossware-cobbler```
 
 ### Default Use
 
