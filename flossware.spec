@@ -61,5 +61,6 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/kickstarts/flossware_*.ks
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware/*
 
-%changelog* Sat Aug 27 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-1
+%changelog
+* Sat Aug 27 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-1
 - No changes.
