@@ -20,11 +20,5 @@ $SNIPPET('flossware/options/biosboot')
 #set global $part = "/boot " + ($getVar('boot', '') != '' and $getVar('boot') or ('--fstype="ext3" --size="512" --recommended'))
 $SNIPPET('flossware/options/part')
 
-#set global $part = "/ " + ( $getVar('root', '') != '' and $getVar('root') or '--fstype="xfs" --size=1024 --recommended --grow')
-$SNIPPET('flossware/options/part')
-
-#set global $part = "swap " + ($getVar('swap', '') != '' and $getVar('part_swap') or '--fstype="swap" --recommended')
-$SNIPPET('flossware/options/part')
-
 #set $partitionSnippet = $getVar('lvmDisks', '') and ('flossware/modules/disk_partition_types/lvm') or ('flossware/modules/disk_partition_types/standard')
 $SNIPPET($partitionSnippet)

@@ -15,4 +15,8 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-# No more disk definitions...
+#set global $part = "/ " + ( $getVar('root', '') != '' and $getVar('root') or '--fstype="xfs" --size=1024 --recommended --grow')
+$SNIPPET('flossware/options/part')
+
+#set global $part = "swap " + ($getVar('swap', '') != '' and $getVar('part_swap') or '--fstype="swap" --recommended')
+$SNIPPET('flossware/options/part')
