@@ -17,8 +17,8 @@
 
 /bin/dbus-uuidgen > /var/lib/dbus/machine-id
 
-#set maxLoop=$getVar('maxLoop', '') and ('echo "options loop max_loop=' + $getVar('maxLoop') + '" >> /etc/modprobe.conf') or ''
+#set $maxLoop=$getVar('maxLoop', '') and ('echo "options loop max_loop=' + $getVar('maxLoop') + '" >> /etc/modprobe.conf') or ''
 $maxLoop
 
-#set authconfig=$getVar('authconfig', '') and ('/usr/sbin/authconfig --update ' + $getVar('authconfig')) or ''
+#set $authconfig=$getVar('authconfig', '') and ('/usr/sbin/authconfig --update ' + $getVar('authconfig')) or ''
 $authconfig

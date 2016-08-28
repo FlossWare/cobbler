@@ -15,5 +15,5 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-#set biosboot=$getVar('biosboot', '') and ('part biosboot ' + $getVar('biosboot')) or ''
+#set $biosboot=$getVar('biosboot', '') and ('part biosboot ' + $getVar('biosboot')) or ''
 $biosboot

@@ -17,6 +17,6 @@
 
 $SNIPPET('flossware/modules/common')
 
-#set global post_body = 'flossware/sections/post_body/centos_atomic'
-#set global ostreesetup = '--osname="centos-atomic-host" --remote="centos-atomic-host" --url="file:///install/ostree" --ref="centos-atomic-host/' + $operatingSystemVersion + '/x86_64/standard" --nogpg'
+#set global $post_body = 'flossware/sections/post_body/centos_atomic'
+#set global $ostreesetup = '--osname="centos-atomic-host" --remote="centos-atomic-host" --url="file:///install/ostree" --ref="centos-atomic-host/' + $operatingSystemVersion + '/x86_64/standard" --nogpg'
 $SNIPPET('flossware/modules/atomic')

@@ -16,5 +16,5 @@
 ##
 
 # Setup authentication options
-#set auth = $getVar('auth', '') != '' and ("auth " + $getVar('auth')) or ''
+#set $auth = $getVar('auth', '') != '' and ("auth " + $getVar('auth')) or ''
 $auth

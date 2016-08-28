@@ -16,4 +16,4 @@
 ##
 
 # System timezone
-timezone  $getVar('timezone', 'America/New_York')
+timezone $getVar('timezone', 'America/New_York')

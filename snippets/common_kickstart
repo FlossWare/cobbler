@@ -15,5 +15,5 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-#set global operatingSystemVersion = $os_version.replace('rhel', '').replace('fedora', '')
+#set global $operatingSystemVersion = $os_version.replace('rhel', '').replace('fedora', '')
 $SNIPPET('flossware/modules/common')

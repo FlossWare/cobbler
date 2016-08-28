@@ -15,9 +15,9 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-#set allLvmDisks = $getVar('lvmDisks', '') != '' and $getVar('lvmDisks').split(',').split(' ') or []
-#set allPv = ''
-#set pv = 1
+#set $allLvmDisks = $getVar('lvmDisks', '') != '' and $getVar('lvmDisks').split(',').split(' ') or []
+#set $allPv = ''
+#set $pv = 1
 #for $anLvmDisk in $allLvmDisks
     part pv.$pv --grow --ondisk=$anLvmDisk --size=$getVar('lvmPartitionSize', '10')
     #set $allPv = $allPv + ' pv.' + str($pv)
@@ -27,4 +27,4 @@
 volgroup VolGroup00 $allPv
 
 logvol swap --fstype="swap" --name=lv_swap --vgname=VolGroup00 --recommended
-logvol / --fstype="$getVar('$rootPartition', 'xfs')" --name=lv_root --vgname=VolGroup00 --size=$getVar('rootPartitionSize', '1024') --recommended --grow
+logvol / --fstype="$getVar('rootPartition', 'xfs')" --name=lv_root --vgname=VolGroup00 --size=$getVar('rootPartitionSize', '1024') --recommended --grow

@@ -17,5 +17,5 @@
 
 rm -f /etc/ostree/remotes.d/fedora-atomic.conf
 
-#set ostree_url = "'http://dl.fedoraproject.org/pub/fedora/linux/atomic/" + $getVar('operatingSystemVersion') + "/'"
+#set $ostree_url = "'http://dl.fedoraproject.org/pub/fedora/linux/atomic/" + $getVar('operatingSystemVersion') + "/'"
 ostree remote add --set=gpg-verify=false fedora-atomic $ostree_url

@@ -18,5 +18,5 @@
 $SNIPPET('flossware/modules/common')
 $SNIPPET('flossware/sections/packages')
 
-#set global post_body = 'flossware/sections/post_body/standard'
+#set global $post_body = 'flossware/sections/post_body/standard'
 $SNIPPET('flossware/sections/post')

@@ -16,5 +16,5 @@
 ##
 
 # System bootloader configuration
-#set bootloader = $getVar('bootloader', '') != '' and ('bootloader ' + $getVar('bootloader')) or ''
+#set $bootloader = $getVar('bootloader', '') != '' and ('bootloader ' + $getVar('bootloader')) or ''
 $bootloader
