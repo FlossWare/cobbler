@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release: 8
+Release: 9
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware/*
 
 %changelog
+* Sun Aug 28 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-9
+- Scot P. Floess <sfloess@redhat.com>  Resolves #22 - common_kickstart is no longer needed
 * Sun Aug 28 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-8
 - Scot P. Floess <sfloess@redhat.com>  Resolves #21 - section variables are included and denoted correctly
 * Sun Aug 28 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-7
