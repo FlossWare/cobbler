@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release: 5
+Release: 6
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware/*
 
 %changelog
+* Sun Aug 28 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-6
+- Scot P. Floess <sfloess@redhat.com>  Resolves #20 - now have GPLv3 license in all source
 * Sat Aug 27 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-5
 - Scot P. Floess <sfloess@redhat.com>  NA - type-o in README.md
 - Scot P. Floess <sfloess@redhat.com>  NA - added yum installation information to the README.md
