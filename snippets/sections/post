@@ -21,6 +21,9 @@ $SNIPPET($post_body)
 /sbin/chkconfig --add network
 /sbin/chkconfig network on
 
+/sbin/chkconfig --del NetworkManager
+/sbin/chkconfig NetworkManager off
+
 /sbin/chkconfig --add sshd
 /sbin/chkconfig sshd on
 
