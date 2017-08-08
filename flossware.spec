@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release: 10
+Release: 11
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware/*
 
 %changelog
+* Mon Aug 07 2017 OpenShift <solenopsis@deadlypenguin.com> 1.0-11
+- Scot P. Floess <sfloess@redhat.com>  NA - disabling NetworkManager
 * Sun Aug 28 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-10
 - Scot P. Floess <sfloess@redhat.com>  Resolves #23 - processing LVM partitions now fixed and README.md denotes the new way to deal with LVM (using spaces vs commas)
 * Sun Aug 28 2016 OpenShift <solenopsis@deadlypenguin.com> 1.0-9
