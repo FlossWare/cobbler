@@ -1,0 +1,4 @@
+[submodule "flossware-scripts"]
+	path = flossware-scripts
+	url = https://github.com/FlossWare/scripts.git
+	branch = master
