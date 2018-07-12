@@ -2,7 +2,7 @@
 
 Welcome to the FlossWare [Cobbler](http://cobbler.github.io/) [kickstarts](http://cobbler.github.io/manuals/2.6.0/3/5_-_Kickstart_Templating.html) and [snippets](http://cobbler.github.io/manuals/2.6.0/3/6_-_Snippets.html) project!
 
-<a href='http://flossware.no-ip.org:58080/job/FlossWare-cobbler'><img src='http://flossware.no-ip.org:58080/job/FlossWare-cobbler/badge/icon?style=plastic'></a>
+[![Build Status](http://flossware.no-ip.org:58080/job/FlossWare-cobbler/badge/icon)](http://flossware.no-ip.org:58080/job/FlossWare-cobbler)
 
 ## Concepts
 
