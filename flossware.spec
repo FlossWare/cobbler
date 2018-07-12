@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release: 21
+Release: 22
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware/*
 
 %changelog
+* Thu Jul 12 2018 Solenopsis <no-reply@solenopsis.org> 1.0-22
+- GitHub <noreply@github.com>  Update README.md
 * Thu Jul 12 2018 Solenopsis <no-reply@solenopsis.org> 1.0-21
 - GitHub <noreply@github.com>  Update README.md
 * Thu Jul 12 2018 Solenopsis <no-reply@solenopsis.org> 1.0-20
