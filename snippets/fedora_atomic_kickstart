@@ -18,7 +18,7 @@
 $SNIPPET('flossware/modules/common')
 
 #set global $post_body = 'flossware/sections/post_body/fedora_atomic'
-#set global $ostreesetup = '--osname="fedora-atomic" --remote="fedora-atomic" --url="' + $tree + '/content/repo" --ref="fedora-atomic/f' + $operatingSystemVersion + '/x86_64/docker-host" --nogpg'
+#set global $ostreesetup = '--osname="fedora-atomic" --remote="fedora-atomic" --url="file:///ostree/repo" --ref="fedora/' + $operatingSystemVersion + '/x86_64/atomic-host" --nogpg'
 $SNIPPET('flossware/modules/atomic')
 
 #set global $addon = "com_redhat_kdump --disable --reserve-mb='128'"
