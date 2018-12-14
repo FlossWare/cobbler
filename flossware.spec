@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release: 23
+Release: 24
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware/*
 
 %changelog
+* Thu Dec 13 2018 Solenopsis <no-reply@solenopsis.org> 1.0-24
+- Scot P. Floess <sfloess@redhat.com>  NA - Fedora Atomic installs were failing
 * Thu Jul 12 2018 Solenopsis <no-reply@solenopsis.org> 1.0-23
 - GitHub <noreply@github.com>  Update README.md
 * Thu Jul 12 2018 Solenopsis <no-reply@solenopsis.org> 1.0-22
