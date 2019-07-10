@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release: 29
+Release: 30
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware/*
 
 %changelog
+* Wed Jul 10 2019 Solenopsis <no-reply@solenopsis.org> 1.0-30
+- GitHub <noreply@github.com>  Create CODE_OF_CONDUCT.md
 * Thu Jun 06 2019 Bot <no-reply@solenopsis.org> 1.0-29
 - No changes.
 * Thu Jun 06 2019 Solenopsis <no-reply@solenopsis.org> 1.0-28
