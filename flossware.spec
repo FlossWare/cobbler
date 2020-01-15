@@ -59,7 +59,7 @@ rm -rf %{buildroot}
 
 %files
 %attr(0755, root, root) /var/lib/cobbler/kickstarts/flossware_*.ks
-%attr(0755, root, root) /var/lib/cobbler/snippets/flossware/*
+%attr(0755, root, root) /var/lib/cobbler/snippets/flossware
 
 %changelog
 * Mon Jan 13 2020 Solenopsis <no-reply@solenopsis.org> 1.0-31
