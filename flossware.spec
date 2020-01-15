@@ -49,7 +49,7 @@ A set of kickstarts and snippets for cobbler.
 %{__install} -p -m 0755 snippets/sections/post_body/* %{buildroot}/var/lib/cobbler/snippets/flossware/sections/post_body
 
 %pre
-rm -f /var/lib/cobbler/kickstarts/flossware_*.ks
+rm -f /var/lib/cobbler/kickstarts
 rm -rf /var/lib/cobbler/snippets/flossware
 
 %preun
