@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release: 32
+Release: 33
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware
 
 %changelog
+* Tue Jan 14 2020 Solenopsis <no-reply@solenopsis.org> 1.0-33
+- Scot P. floess <sfloess@nc.rr.com>  N/A - fixed problem with rpmbuld/flossware.spec
 * Tue Jan 14 2020 Solenopsis <no-reply@solenopsis.org> 1.0-32
 - Scot P. floess <sfloess@nc.rr.com>  N/A - fixed problem with rpmbuld/flossware.spec
 * Mon Jan 13 2020 Solenopsis <no-reply@solenopsis.org> 1.0-31
