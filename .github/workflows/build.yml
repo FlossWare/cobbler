@@ -21,8 +21,3 @@ jobs:
       - name: Setup 
         run: |
           env
-          #cd ${{ GITHUB_WORKSPACE }}
-          #${{ GITHUB_WORKSPACE }}/../FlossWare-scripts/bash/continuous-delivery/prepare-rpm-git-release.sh flossware.spec
-          #./buildrpm.sh ${{ GITHUB_WORKSPACE }}/../rpmbuilds
-          #${{ GITHUB_WORKSPACE }}/../FlossWare-scripts/bash/git/push-current-branch-to-gitrepo.sh &&
-          #${{ GITHUB_WORKSPACE }}/../FlossWare-scripts/bash/bintray/rpm-publish.sh --bintrayUser sfloess --bintrayKey ${{ BINTRAY_API_KEY }} --bintrayAccount flossware --bintrayRepo rpm --bintrayPackage cobbler --bintrayFile ${{ GITHUB_WORKSPACE }}/../rpmbuilds/rpm/RPMS/noarch/`ls -t ${{ GITHUB_WORKSPACE }}/../rpmbuilds/rpm/RPMS/noarch  | head -1` --bintrayContext flossware.spec
