@@ -20,7 +20,7 @@ jobs:
         
       - name: Setup 
         run: |
-          echo "My workspace:  $GITHUB_WORKSPACE"
+          env
           #cd ${{ GITHUB_WORKSPACE }}
           #${{ GITHUB_WORKSPACE }}/../FlossWare-scripts/bash/continuous-delivery/prepare-rpm-git-release.sh flossware.spec
           #./buildrpm.sh ${{ GITHUB_WORKSPACE }}/../rpmbuilds
