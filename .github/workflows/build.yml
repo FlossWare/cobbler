@@ -41,16 +41,19 @@ jobs:
       - name: Build RPM
         run: ${GITHUB_WORKSPACE}/buildrpm.sh ${GITHUB_WORKSPACE}/../rpmbuilds
 
-      - name: Examine bash dir
-        run: ls ${GITHUB_WORKSPACE}/flossware-scripts/bash
-        
-      - name: Examine git dir
-        run: ls ${GITHUB_WORKSPACE}/flossware-scripts/bash/git
-        
-      - name: Commit/Push Git Repo
-        run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/git/push-current-branch-to-gitrepo.sh
+      - name: Push Git Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+              #- name: Commit/Push Git Repo
+              #run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/git/push-current-branch-to-gitrepo.sh
+
+        # git push origin `compute-git-current-branch` --tags            
         
       - name: Publish to Bintray
         run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/bintray/rpm-publish.sh --bintrayUser sfloess --bintrayKey ${{ secrets.BINTRAY_API_KEY }} --bintrayAccount flossware --bintrayRepo rpm --bintrayPackage cobbler --bintrayFile ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch/`ls -t ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch  | head -1` --bintrayContext flossware.spec
+          
+        
           
         
