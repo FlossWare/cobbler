@@ -16,12 +16,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Checkout submodules
+        uses: srt32/git-actions@v0.0.3
+        with:
+          args: git submodule update --init --recursive
         
       - name: Setup 
-        run: |
+        run: | 
+          git config --global user.name "Git Action"
+          git config --global user.email github-action@noreply.com
           cd ${GITHUB_WORKSPACE}
-          ${GITHUB_WORKSPACE}/../FlossWare-scripts/bash/continuous-delivery/prepare-rpm-git-release.sh flossware.spec
+          ${GITHUB_WORKSPACE}/flossWare-scripts/bash/continuous-delivery/prepare-rpm-git-release.sh flossware.spec
           ./buildrpm.sh ${GITHUB_WORKSPACE}/../rpmbuilds
-          ${GITHUB_WORKSPACE}/../FlossWare-scripts/bash/git/push-current-branch-to-gitrepo.sh &&
-          ${GITHUB_WORKSPACE}/../FlossWare-scripts/bash/bintray/rpm-publish.sh --bintrayUser sfloess --bintrayKey ${{ secrets.BINTRAY_API_KEY }} --bintrayAccount flossware --bintrayRepo rpm --bintrayPackage cobbler --bintrayFile ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch/`ls -t ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch  | head -1` --bintrayContext flossware.spec
+          ${GITHUB_WORKSPACE}/flossware-scripts/bash/git/push-current-branch-to-gitrepo.sh
+          ${GITHUB_WORKSPACE}/flossware-scripts/bash/bintray/rpm-publish.sh --bintrayUser sfloess --bintrayKey ${{ secrets.BINTRAY_API_KEY }} --bintrayAccount flossware --bintrayRepo rpm --bintrayPackage cobbler --bintrayFile ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch/`ls -t ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch  | head -1` --bintrayContext flossware.spec
