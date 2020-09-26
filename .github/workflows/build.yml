@@ -27,9 +27,15 @@ jobs:
           git config --global user.email github-action@noreply.com
           
       - name: Rev Spec File
-        run: ls ${GITHUB_WORKSPACE}/flossware-scripts
+        run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/continuous-delivery/prepare-rpm-git-release.sh flossware.spec
+
+      - name: Build RPM
+        run: ${GITHUB_WORKSPACE}/buildrpm.sh ${GITHUB_WORKSPACE}/../rpmbuilds
         
-      - name: Rev Spec File
-        run: ls ${GITHUB_WORKSPACE}/flossware-scripts/bash
+      - name: Commit/Push Git Repo
+        run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/git/push-current-branch-to-gitrepo.sh
+        
+      - name: Publish to Bintray
+        run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/bintray/rpm-publish.sh --bintrayUser sfloess --bintrayKey ${{ secrets.BINTRAY_API_KEY }} --bintrayAccount flossware --bintrayRepo rpm --bintrayPackage cobbler --bintrayFile ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch/`ls -t ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch  | head -1` --bintrayContext flossware.spec
           
         
