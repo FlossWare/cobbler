@@ -21,3 +21,4 @@ jobs:
       - name: Setup 
         run: |
           env
+          echo "Here is our workspace: ${GITHUB_WORKSPACE}"
