@@ -29,6 +29,8 @@ jobs:
           git config --global user.name "Git Action"
           git config --global user.email github-action@noreply.com
           cd ${GITHUB_WORKSPACE}
+          echo "Dir contains:"
+          ls
           ${GITHUB_WORKSPACE}/flossWare-scripts/bash/continuous-delivery/prepare-rpm-git-release.sh flossware.spec
           ./buildrpm.sh ${GITHUB_WORKSPACE}/../rpmbuilds
           ${GITHUB_WORKSPACE}/flossware-scripts/bash/git/push-current-branch-to-gitrepo.sh
