@@ -23,6 +23,9 @@ jobs:
         
       - name: Get Latest FlossWare Scripts
         run: |
+          cd ${GITHUB_WORKSPACE}/flossware-scripts
+          git checkout .
+          cd -
           git submodule foreach git checkout master
           git submodule foreach git pull
           git submodule update --remote --merge
