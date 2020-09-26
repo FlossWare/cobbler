@@ -29,11 +29,6 @@ jobs:
           git submodule foreach git checkout master
           git submodule foreach git pull
           git submodule update --remote --merge
-
-      - name: Setup Git Config
-        run: | 
-          git config --global user.name "Git Action"
-          git config --global user.email github-action@noreply.com
           
       - name: Rev Spec File
         run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/continuous-delivery/prepare-rpm-git-release.sh flossware.spec
@@ -41,15 +36,16 @@ jobs:
       - name: Build RPM
         run: ${GITHUB_WORKSPACE}/buildrpm.sh ${GITHUB_WORKSPACE}/../rpmbuilds
 
+      - name: Setup Git Config
+        run: | 
+          git config --global user.name "Git Action"
+          git config --global user.email github-action@noreply.com
+
       - name: Push Git Changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-              #- name: Commit/Push Git Repo
-              #run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/git/push-current-branch-to-gitrepo.sh
-
-        # git push origin `compute-git-current-branch` --tags            
+          tags: true
         
       - name: Publish to Bintray
         run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/bintray/rpm-publish.sh --bintrayUser sfloess --bintrayKey ${{ secrets.BINTRAY_API_KEY }} --bintrayAccount flossware --bintrayRepo rpm --bintrayPackage cobbler --bintrayFile ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch/`ls -t ${GITHUB_WORKSPACE}/../rpmbuilds/rpm/RPMS/noarch  | head -1` --bintrayContext flossware.spec
