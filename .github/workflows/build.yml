@@ -34,6 +34,10 @@ jobs:
           echo "FlossWare scripts contains:"
           ls -la flossware-scripts
           echo "Workspace:  ${GITHUB_WORKSPACE}"
+          find ${GITHUB_WORKSPACE}/flossWare-scripts/bash
+          cd ${GITHUB_WORKSPACE}/flossWare-scripts
+          git branch
+          cd -
           ${GITHUB_WORKSPACE}/flossWare-scripts/bash/continuous-delivery/prepare-rpm-git-release.sh flossware.spec
           ./buildrpm.sh ${GITHUB_WORKSPACE}/../rpmbuilds
           ${GITHUB_WORKSPACE}/flossware-scripts/bash/git/push-current-branch-to-gitrepo.sh
