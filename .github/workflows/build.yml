@@ -19,17 +19,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         
-      - name: Checkout submodules
-        uses: srt32/git-actions@v0.0.3
-        with:
-          args: git submodule update --remote --merge
-        
       - name: Setup 
         run: | 
           git config --global user.name "Git Action"
           git config --global user.email github-action@noreply.com
+          
+          git submodule foreach git checkout master
+          git submodule foreach git pull
+          git submodule update --remote --merge
+
           cd ${GITHUB_WORKSPACE}
-                    echo "Dir contains:"
+          echo "Dir contains:"
           ls -la
           echo "FlossWare scripts contains:"
           ls -la flossware-scripts
