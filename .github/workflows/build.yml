@@ -28,8 +28,6 @@ jobs:
           
       - name: Rev Spec File
         run: ls ${GITHUB_WORKSPACE}/flossware-scripts
-          
-      - name: Setup JFrog for Bintray
-        uses: jfrog/setup-jfrog-cli@v1gvim 
+
           
         
