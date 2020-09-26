@@ -20,6 +20,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: 'recursive'
+        
+      - name: Get Latest FlossWare Scripts
+        run: |
+          git submodule foreach git checkout master
+          git submodule foreach git pull
+          git submodule update --remote --merge
 
       - name: Setup Git Config
         run: | 
