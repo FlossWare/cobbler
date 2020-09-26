@@ -31,6 +31,12 @@ jobs:
 
       - name: Build RPM
         run: ${GITHUB_WORKSPACE}/buildrpm.sh ${GITHUB_WORKSPACE}/../rpmbuilds
+
+      - name: Examine bash dir
+        run: ls ${GITHUB_WORKSPACE}/flossware-scripts/bash
+        
+      - name: Examine git dir
+        run: ls ${GITHUB_WORKSPACE}/flossware-scripts/bash/git
         
       - name: Commit/Push Git Repo
         run: ${GITHUB_WORKSPACE}/flossware-scripts/bash/git/push-current-branch-to-gitrepo.sh
