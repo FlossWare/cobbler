@@ -36,7 +36,8 @@ jobs:
               run:  cat flossware.spec
 
             - name: Build rpm
-              run: buildrpm.sh
+              run: |
+                  buildrpm.sh
 
             - name: Deploy to baltorepo
               run: |
