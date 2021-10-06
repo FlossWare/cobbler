@@ -46,7 +46,7 @@ jobs:
                   cp -a templates /tmp/flossware-cobbler-${VERSION}
                   cp -a snippets /tmp/flossware-cobbler-${VERSION}
                   tar czf "${RPM_SOURCES_DIR}/flossware-cobbler-${VERSION}.tar.gz" -C /tmp "flossware-cobbler-${VERSION}"
-                  cp -a * "${RPM_SOURCES_DIR}/flossware-cobbler-${VERSION}"
+                  #cp -a * "${RPM_SOURCES_DIR}/flossware-cobbler-${VERSION}"
               
             - name: Build rpm
               run: |
