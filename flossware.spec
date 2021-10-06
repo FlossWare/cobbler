@@ -31,7 +31,7 @@ A set of kickstarts and snippets for cobbler.
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/sections/post_body
 
 %{__install} -p -m 0755 templates/* %{buildroot}/var/lib/cobbler/templates/
-%{__install} -p -m 0755 snippets/* %{buildroot}/var/lib/cobbler/snippets/flossware
+%{__install} -p -m 0755 snippets/*_kickstart %{buildroot}/var/lib/cobbler/snippets/flossware
 %{__install} -p -m 0755 snippets/modules/atomic %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__install} -p -m 0755 snippets/modules/common %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__install} -p -m 0755 snippets/modules/defined_disk_partition %{buildroot}/var/lib/cobbler/snippets/flossware/modules

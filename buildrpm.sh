@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 # Copyright (C) 2016 flossware
 #
@@ -17,7 +17,7 @@
 
 if [ $# = "0" ]
 then
-	RPM_HOME=~/.flossware/cobbler
+	RPM_HOME=/tmp/flossware/cobbler
 else
 	RPM_HOME=$1
 fi
@@ -26,22 +26,11 @@ fi
 
 mkdir -p ${RPM_HOME}
 
-echo "Building RPM in ${RPM_HOME}/rpm..."
+echo "Building RPM in ${RPM_HOME}..."
 
 # -------------------------------------------------------
 
-export RPM_BUILD_ROOT=${RPM_HOME}/rpm
-export RPM_BUILD_DIR=${RPM_HOME}/rpm/BUILD
-export RPM_ROOT_DIR=${RPM_HOME}/rpm
-export RPM_SOURCE_DIR=${RPM_HOME}/rpm/SOURCES
-
-# -------------------------------------------------------
-
-mkdir -p ${RPM_BUILD_ROOT}/BUILD
-mkdir -p ${RPM_BUILD_ROOT}/RPMS
-mkdir -p ${RPM_BUILD_ROOT}/SOURCES
-mkdir -p ${RPM_BUILD_ROOT}/SPECS
-mkdir -p ${RPM_BUILD_ROOT}/SRPMS
+mkdir -p ${RPM_HOME}/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 # -------------------------------------------------------
 
@@ -49,12 +38,18 @@ VERSION=`grep 'Version:' flossware.spec | tr -d ' ' | cut -f 2 -d ':'`
 
 # -------------------------------------------------------
 
-mkdir -p /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
-cp -a templates /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
-cp -a snippets /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
-tar czf flossware-cobbler-${VERSION}.tar.gz -C /tmp/flossware/cobbler flossware-cobbler-${VERSION}
-mv flossware-cobbler-${VERSION}.tar.gz ${RPM_BUILD_ROOT}/SOURCES
-rm -rf /tmp/flossware/cobbler
+mkdir -p /tmp/flossware-cobbler-${VERSION}
+
+cp -a templates /tmp/flossware-cobbler-${VERSION}
+cp -a snippets  /tmp/flossware-cobbler-${VERSION}
+
+tar czf ${RPM_HOME}/SOURCES/flossware-cobbler-${VERSION}.tar.gz -C /tmp flossware-cobbler-${VERSION}
+
+#cp -a templates ${RPM_HOME}/SOURCES/flossware-cobbler-${VERSION}
+#cp -a snippets  ${RPM_HOME}/SOURCES/flossware-cobbler-${VERSION}
+
+#cp -a * ${RPM_HOME}/SOURCES/flossware-cobbler-${VERSION}
+#rm -rf /tmp/flossware/cobbler
 
 # -------------------------------------------------------
 
@@ -64,7 +59,7 @@ cd `dirname $0`
 
 # -------------------------------------------------------
 
-rpmbuild --define "_topdir ${RPM_BUILD_ROOT}" -ba flossware.spec
+rpmbuild --verbose  --define "_topdir ${RPM_HOME}" -ba flossware.spec
 
 # -------------------------------------------------------
 

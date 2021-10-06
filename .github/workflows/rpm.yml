@@ -27,11 +27,6 @@ jobs:
             - name: Compute new release
               run: echo "NEW_RELEASE=`expr ${OLD_RELEASE} + 1`" >> $GITHUB_ENV
 
-            - name: Set RPM build dir
-              run: echo "RPM_BUILD_DIR=/tmp/flossware/RPMBUILD" >> $GITHUB_ENV
-
-            - name: Compute sources dir
-              run: echo "RPM_SOURCES_DIR=${RPM_BUILD_DIR}/SOURCES" >> $GITHUB_ENV
               
             - name: Update spec version
               run: |
@@ -40,21 +35,12 @@ jobs:
             - name: New spec file
               run:  cat flossware.spec
 
-            - name: Prepare for RPM build
-              run: |
-                  mkdir -p "/tmp/flossware-cobbler-${VERSION}" "${RPM_BUILD_DIR}" "${RPM_SOURCES_DIR}" "${RPM_BUILD_DIR}/BUILD" "${RPM_BUILD_DIR}/RPMS" "${RPM_BUILD_DIR}/SOURCES" "${RPM_BUILD_DIR}/SPECS" "${RPM_BUILD_DIR}/SRPMS" "${RPM_BUILD_DIR}/SOURCES/flossware-cobbler-${VERSION}"
-                  cp -a templates /tmp/flossware-cobbler-${VERSION}
-                  cp -a snippets /tmp/flossware-cobbler-${VERSION}
-                  tar czf "${RPM_SOURCES_DIR}/flossware-cobbler-${VERSION}.tar.gz" -C /tmp "flossware-cobbler-${VERSION}"
-                  #cp -a * "${RPM_SOURCES_DIR}/flossware-cobbler-${VERSION}"
-              
             - name: Build rpm
-              run: |
-                  rpmbuild --define "_topdir ${RPM_BUILD_DIR}" -ba flossware.spec
+              run: builrpm.sh
 
             - name: Deploy to baltorepo
               run: |
-                  curl --header "Authorization: Bearer ${{ secrets.BALTO_REPO_API_TOKEN }}" --form "package=@${RPM_BUILD_DIR}/RPMS/noarch/flossware-${VERSION}-${NEW_RELEASE}.noarch.rpm" --form "readme=README.md" https://flossware.baltorepo.com/cobbler/rpm/upload/
+                  curl --header "Authorization: Bearer ${{ secrets.BALTO_REPO_API_TOKEN }}" --form "package=@/tmp/flossware/cobbler/RPMS/noarch/flossware-cobbler-${VERSION}-${NEW_RELEASE}.noarch.rpm" --form "readme=README.md" https://flossware.baltorepo.com/cobbler/rpm/upload/
 
             - name: Commit files
               run: |
