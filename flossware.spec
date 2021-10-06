@@ -58,7 +58,7 @@ rm -rf /var/lib/cobbler/snippets/flossware
 rm -rf %{buildroot}
 
 %files
-%attr(0755, root, root) /var/lib/cobbler/kickstarts
+%attr(0755, root, root) /var/lib/cobbler/templates
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware
 
 %changelog
