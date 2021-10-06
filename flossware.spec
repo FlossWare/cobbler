@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release: 37
+Release:  37
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
@@ -20,7 +20,7 @@ A set of kickstarts and snippets for cobbler.
 
 %install
 %{__rm} -rf %{buildroot}
-%{__mkdir_p} %{buildroot}/var/lib/cobbler/kickstarts
+%{__mkdir_p} %{buildroot}/var/lib/cobbler/templates
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/modules/disk_partition_types
@@ -30,8 +30,8 @@ A set of kickstarts and snippets for cobbler.
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/sections/anaconda_body
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/sections/post_body
 
-%{__install} -p -m 0755 kickstarts/* %{buildroot}/var/lib/cobbler/kickstarts/
-%{__install} -p -m 0755 snippets/*_kickstart %{buildroot}/var/lib/cobbler/snippets/flossware
+%{__install} -p -m 0755 templates/* %{buildroot}/var/lib/cobbler/templates/
+%{__install} -p -m 0755 snippets/*_templates %{buildroot}/var/lib/cobbler/snippets/flossware
 %{__install} -p -m 0755 snippets/modules/atomic %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__install} -p -m 0755 snippets/modules/common %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__install} -p -m 0755 snippets/modules/defined_disk_partition %{buildroot}/var/lib/cobbler/snippets/flossware/modules
@@ -49,7 +49,7 @@ A set of kickstarts and snippets for cobbler.
 %{__install} -p -m 0755 snippets/sections/post_body/* %{buildroot}/var/lib/cobbler/snippets/flossware/sections/post_body
 
 %pre
-rm -f /var/lib/cobbler/kickstarts
+rm -f /var/lib/cobbler/templates
 rm -rf /var/lib/cobbler/snippets/flossware
 
 %preun

@@ -1,0 +1,66 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: CD-CI for RPM
+
+on:
+    push:
+        branches: [ main ]
+
+jobs:
+    build:
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.pusher.email != 'version-bump@flossware.org'
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Preparing environment
+              run: sudo apt-get update
+
+            - name: Compute version
+              run: echo "VERSION=`cat flossware.spec | egrep Version | cut -f 2 -d ':' | tr -d ' '`" >> $GITHUB_ENV
+
+            - name: Compute old release version
+              run: echo "OLD_RELEASE=`cat flossware.spec | egrep Release | cut -f 2 -d ':' | tr -d ' '`" >> $GITHUB_ENV
+
+            - name: Compute new release
+              run: echo "NEW_RELEASE=`expr ${OLD_RELEASE} + 1`" >> $GITHUB_ENV
+
+            - name: Set RPM build dir
+              run: echo "RPM_BUILD_DIR=/tmp/flossware/RPMBUILD" >> $GITHUB_ENV
+
+            - name: Compute sources dir
+              run: echo "RPM_SOURCES_DIR=${RPM_BUILD_DIR}/SOURCES" >> $GITHUB_ENV
+              
+            - name: Update spec version
+              run: |
+                  sed -i "s/Release: .*/Release:  ${NEW_RELEASE}/g" flossware.spec
+
+            - name: New spec file
+              run:  cat flossware.spec
+
+            - name: Prepare for RPM build
+              run: |
+                  mkdir -p "${RPM_BUILD_DIR}" "${RPM_SOURCES_DIR}" "/tmp/flossware-${VERSION}" "${RPM_BUILD_DIR}/BUILD" "${RPM_BUILD_DIR}/RPMS" "${RPM_BUILD_DIR}/SOURCES" "${RPM_BUILD_DIR}/SPECS" "${RPM_BUILD_DIR}/SRPMS" "${RPM_BUILD_DIR}/SOURCES/flossware-${VERSION}"
+                  cp -a templates /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
+                  cp -a snippets /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
+                  tar czf "${RPM_SOURCES_DIR}/flossware-${VERSION}.tar.gz" -C /tmp "flossware-${VERSION}"
+                  cp -a * "${RPM_SOURCES_DIR}/flossware-${VERSION}"
+              
+            - name: Build rpm
+              run: |
+                  rpmbuild --define "_topdir ${RPM_BUILD_DIR}" -ba flossware.spec
+
+            - name: Deploy to baltorepo
+              run: |
+                  curl --header "Authorization: Bearer ${{ secrets.BALTO_REPO_API_TOKEN }}" --form "package=@${RPM_BUILD_DIR}/RPMS/noarch/flossware-${VERSION}-${NEW_RELEASE}.noarch.rpm" --form "readme=README.md" https://flossware.baltorepo.com/cobbler/rpm/upload/
+
+            - name: Commit files
+              run: |
+                  git config --local user.email "version-bump@flossware.org"
+                  git config --local user.name "GitHub Workflow"
+                  git commit -m "Version bump [${VERSION}-${NEW_RELEASE}]" -a
+                  git tag "${VERSION}-${NEW_RELEASE}"
+                  git push origin main
+                  git push origin "${VERSION}-${NEW_RELEASE}"

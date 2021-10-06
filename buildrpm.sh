@@ -50,7 +50,7 @@ VERSION=`grep 'Version:' flossware.spec | tr -d ' ' | cut -f 2 -d ':'`
 # -------------------------------------------------------
 
 mkdir -p /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
-cp -a kickstarts /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
+cp -a templates /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
 cp -a snippets /tmp/flossware/cobbler/flossware-cobbler-${VERSION}
 tar czf flossware-cobbler-${VERSION}.tar.gz -C /tmp/flossware/cobbler flossware-cobbler-${VERSION}
 mv flossware-cobbler-${VERSION}.tar.gz ${RPM_BUILD_ROOT}/SOURCES
