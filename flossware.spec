@@ -1,7 +1,7 @@
 Summary: A set of kickstarts and snippets for cobbler
 Name: flossware-cobbler
 Version:  1.0
-Release:  37
+Release:  38
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
 Group: Applications/Systems
