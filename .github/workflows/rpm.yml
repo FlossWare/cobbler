@@ -42,7 +42,7 @@ jobs:
 
             - name: Prepare for RPM build
               run: |
-                  mkdir -p "${RPM_BUILD_DIR}" "${RPM_SOURCES_DIR}" "/tmp/flossware-${VERSION}" "${RPM_BUILD_DIR}/BUILD" "${RPM_BUILD_DIR}/RPMS" "${RPM_BUILD_DIR}/SOURCES" "${RPM_BUILD_DIR}/SPECS" "${RPM_BUILD_DIR}/SRPMS" "${RPM_BUILD_DIR}/SOURCES/flossware-cobbler-${VERSION}"
+                  mkdir -p "/tmp/flossware-cobbler-${VERSION}" "${RPM_BUILD_DIR}" "${RPM_SOURCES_DIR}" "${RPM_BUILD_DIR}/BUILD" "${RPM_BUILD_DIR}/RPMS" "${RPM_BUILD_DIR}/SOURCES" "${RPM_BUILD_DIR}/SPECS" "${RPM_BUILD_DIR}/SRPMS" "${RPM_BUILD_DIR}/SOURCES/flossware-cobbler-${VERSION}"
                   cp -a templates /tmp/flossware-cobbler-${VERSION}
                   cp -a snippets /tmp/flossware-cobbler-${VERSION}
                   tar czf "${RPM_SOURCES_DIR}/flossware-cobblee-${VERSION}.tar.gz" -C /tmp "flossware-cobbler-${VERSION}"
