@@ -10,7 +10,7 @@ BuildArch: noarch
 
 %description
 A set of kickstarts and snippets for cobbler supporting modern distributions:
-- Fedora 38-40+
+- Fedora 38-44
 - RHEL 8/9/10 and derivatives (Rocky Linux, AlmaLinux, CentOS Stream)
 - Ubuntu/Debian (via preseed templates)
 - FreeBSD 13.x, 14.x (via installscript templates)
@@ -80,7 +80,7 @@ rm -rf %{buildroot}
 - Updated to systemctl from deprecated chkconfig (required for RHEL 10)
 - Updated to authselect from deprecated authconfig (RHEL 9/10 compatible)
 - Fixed modprobe configuration to use modprobe.d directory
-- Added support for RHEL 10 and Fedora 40+
+- Added support for RHEL 10 and Fedora 40-44
 - Added Debian 11/12/13 and Ubuntu 22.04/24.04 preseed templates
 - Added FreeBSD 13.x/14.x installscript templates (UFS and ZFS)
 - Switched deployment from baltorepo.com to packagecloud.io

@@ -15,7 +15,7 @@ All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templa
 **Supported Distributions:**
 
 *Red Hat Family (Kickstart):*
-- Fedora 38, 39, 40+
+- Fedora 38, 39, 40, 41, 42, 43, 44
 - RHEL 8.x, 9.x, 10.x
 - Rocky Linux 8.x, 9.x, 10.x
 - AlmaLinux 8.x, 9.x, 10.x

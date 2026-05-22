@@ -85,6 +85,10 @@ jobs:
                   package_cloud push flossware/cobbler/fedora/38 "${RPM_FILE}"
                   package_cloud push flossware/cobbler/fedora/39 "${RPM_FILE}"
                   package_cloud push flossware/cobbler/fedora/40 "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/fedora/41 "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/fedora/42 "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/fedora/43 "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/fedora/44 "${RPM_FILE}"
 
                   # Push DEB to Debian repos
                   package_cloud push flossware/cobbler/debian/bullseye "${DEB_FILE}"
