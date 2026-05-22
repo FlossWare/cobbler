@@ -8,9 +8,9 @@ Welcome to the FlossWare [Cobbler](http://cobbler.github.io/) [kickstarts](http:
 
 ### Kickstarts
 
-All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templates) are simple wrappers that call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/master/snippets):
+All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/main/templates) are simple wrappers that call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/main/snippets):
 
-* [flossware_standard.ks](https://github.com/FlossWare/cobbler/blob/master/templates/flossware_standard.ks): Standard kickstart template for modern Linux distributions.
+* [flossware_standard.ks](https://github.com/FlossWare/cobbler/blob/main/templates/flossware_standard.ks): Standard kickstart template for modern Linux distributions.
 
 **Supported Distributions:**
 
@@ -34,20 +34,20 @@ All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templa
 
 ### Snippets
 
-[Snippets](https://github.com/FlossWare/cobbler/tree/master/snippets) represent the bulk of all work.  We considered putting some templatization in the [kickstarts](https://github.com/FlossWare/cobbler/tree/master/kickstarts) but felt that keeping that functionality together made the most logical sense.  [Snippets](https://github.com/FlossWare/cobbler/tree/master/snippets) are broken up into the categories found below.  Each concept (with the exception of the Kickstart Counterparts) is contained in a directory of that name.
+[Snippets](https://github.com/FlossWare/cobbler/tree/main/snippets) represent the bulk of all work.  We considered putting some templatization in the [kickstarts](https://github.com/FlossWare/cobbler/tree/main/templates) but felt that keeping that functionality together made the most logical sense.  [Snippets](https://github.com/FlossWare/cobbler/tree/main/snippets) are broken up into the categories found below.  Each concept (with the exception of the Kickstart Counterparts) is contained in a directory of that name.
 
 #### Kickstart Counterparts
 
-As mentioned above, all [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templates) call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/master/snippets).  The job of these snippets is to set variables (where appropriate) and coordinate assembly of the [kickstart](http://cobbler.github.io/manuals/2.6.0/3/5_-_Kickstart_Templating.html) result as a whole:
+As mentioned above, all [kickstarts](https://github.com/FlossWare/cobbler/tree/main/templates) call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/main/snippets).  The job of these snippets is to set variables (where appropriate) and coordinate assembly of the [kickstart](http://cobbler.github.io/manuals/2.6.0/3/5_-_Kickstart_Templating.html) result as a whole:
 
-* [standard_kickstart](https://github.com/FlossWare/cobbler/blob/master/snippets/standard_kickstart): For Fedora, RHEL 8/9/10, and derivatives
+* [standard_kickstart](https://github.com/FlossWare/cobbler/blob/main/snippets/standard_kickstart): For Fedora, RHEL 8/9/10, and derivatives
 
 #### Preseed Templates
 
 For Debian and Ubuntu installations, preseed templates are available:
 
-* [flossware_ubuntu.preseed](https://github.com/FlossWare/cobbler/blob/master/preseed/flossware_ubuntu.preseed): For Ubuntu 22.04 LTS and 24.04 LTS
-* [flossware_debian.preseed](https://github.com/FlossWare/cobbler/blob/master/preseed/flossware_debian.preseed): For Debian 11 (Bullseye), 12 (Bookworm), and 13 (Trixie)
+* [flossware_ubuntu.preseed](https://github.com/FlossWare/cobbler/blob/main/preseed/flossware_ubuntu.preseed): For Ubuntu 22.04 LTS and 24.04 LTS
+* [flossware_debian.preseed](https://github.com/FlossWare/cobbler/blob/main/preseed/flossware_debian.preseed): For Debian 11 (Bullseye), 12 (Bookworm), and 13 (Trixie)
 
 Preseed files use Debian Installer (d-i) syntax and are fundamentally different from kickstart templates.
 
@@ -55,14 +55,14 @@ Preseed files use Debian Installer (d-i) syntax and are fundamentally different 
 
 For FreeBSD installations, installscript templates are available:
 
-* [flossware_freebsd_ufs.installscript](https://github.com/FlossWare/cobbler/blob/master/freebsd/flossware_freebsd_ufs.installscript): For FreeBSD 13.x/14.x with UFS filesystem
-* [flossware_freebsd_zfs.installscript](https://github.com/FlossWare/cobbler/blob/master/freebsd/flossware_freebsd_zfs.installscript): For FreeBSD 13.x/14.x with ZFS filesystem
+* [flossware_freebsd_ufs.installscript](https://github.com/FlossWare/cobbler/blob/main/freebsd/flossware_freebsd_ufs.installscript): For FreeBSD 13.x/14.x with UFS filesystem
+* [flossware_freebsd_zfs.installscript](https://github.com/FlossWare/cobbler/blob/main/freebsd/flossware_freebsd_zfs.installscript): For FreeBSD 13.x/14.x with ZFS filesystem
 
 FreeBSD installscripts use bsdinstall format and are fundamentally different from both kickstart and preseed templates.
 
 #### Options
 
-The [option snippets](https://github.com/FlossWare/cobbler/tree/master/snippets/options) represent an [option](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-commands) that one may find in a kickstart file - for example [autopart](https://github.com/FlossWare/cobbler/blob/master/snippets/options/autopart) for automatically creating partitions.
+The [option snippets](https://github.com/FlossWare/cobbler/tree/main/snippets/options) represent an [option](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-commands) that one may find in a kickstart file - for example [autopart](https://github.com/FlossWare/cobbler/blob/main/snippets/options/autopart) for automatically creating partitions.
 
 Should an option afford parameters, simply denoting the name of the option in your ```ksmeta``` as the name with the value being what should end up in the resultant [kickstart](http://cobbler.github.io/manuals/2.6.0/3/5_-_Kickstart_Templating.html).  As an example, let's assume you wish to set the language to ```en_US``` in your [kickstart](http://cobbler.github.io/manuals/2.6.0/3/5_-_Kickstart_Templating.html):
 
@@ -78,11 +78,11 @@ lang en_US
 
 #### Modules
 
-[Module snippets](https://github.com/FlossWare/cobbler/tree/master/snippets/modules) represent logically related snippets contained in a file (think of them like a [subroutine](https://en.wikipedia.org/wiki/Subroutine)):
-* [common](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/common): layout "common" kickstarting options, like ```text```, ```skipx```, etc.
-* [defined_disk_partition](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/defined_disk_partition): if not using ```autopart```, will layout a "good enough" disk structure.  If you denote ```lvmDisks``` as a ```ksmeta``` variable whose values are the disks to use, it will layout [LVM partitioning](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Logical_Volume_Manager_Administration/LVM_GUI.html) for you.  As an example ```ksmeta='lvmDisks="sda sdb sdc"'``` will use disks ```sda```, ```sdb``` and ```sdc``` as one [LVM](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Logical_Volume_Manager_Administration/LVM_GUI.html) partition spanning all those disks.
-* [disk_partition](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/disk_partition): "common" disk partitioning snippets.  If [autopart](https://github.com/FlossWare/cobbler/blob/master/snippets/options/autopart) is a ```ksmeta``` variable, it will use that [option](https://github.com/FlossWare/cobbler/tree/master/snippets/options) otherwise it will use use the [defined_disk_partition snippet](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/defined_disk_partition).  
-* [filesystem](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/filesystem): "common" file system snippet for [zerombr](https://github.com/FlossWare/cobbler/blob/master/snippets/options/zerombr), [ignoredisk](https://github.com/FlossWare/cobbler/blob/master/snippets/options/ignoredisk) and [bootloader](https://github.com/FlossWare/cobbler/blob/master/snippets/options/bootloader) options as well as calling the [disk_partition snippet](https://github.com/FlossWare/cobbler/blob/master/snippets/modules/disk_partition).
+[Module snippets](https://github.com/FlossWare/cobbler/tree/main/snippets/modules) represent logically related snippets contained in a file (think of them like a [subroutine](https://en.wikipedia.org/wiki/Subroutine)):
+* [common](https://github.com/FlossWare/cobbler/blob/main/snippets/modules/common): layout "common" kickstarting options, like ```text```, ```skipx```, etc.
+* [defined_disk_partition](https://github.com/FlossWare/cobbler/blob/main/snippets/modules/defined_disk_partition): if not using ```autopart```, will layout a "good enough" disk structure.  If you denote ```lvmDisks``` as a ```ksmeta``` variable whose values are the disks to use, it will layout [LVM partitioning](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Logical_Volume_Manager_Administration/LVM_GUI.html) for you.  As an example ```ksmeta='lvmDisks="sda sdb sdc"'``` will use disks ```sda```, ```sdb``` and ```sdc``` as one [LVM](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Logical_Volume_Manager_Administration/LVM_GUI.html) partition spanning all those disks.
+* [disk_partition](https://github.com/FlossWare/cobbler/blob/main/snippets/modules/disk_partition): "common" disk partitioning snippets.  If [autopart](https://github.com/FlossWare/cobbler/blob/main/snippets/options/autopart) is a ```ksmeta``` variable, it will use that [option](https://github.com/FlossWare/cobbler/tree/main/snippets/options) otherwise it will use use the [defined_disk_partition snippet](https://github.com/FlossWare/cobbler/blob/main/snippets/modules/defined_disk_partition).  
+* [filesystem](https://github.com/FlossWare/cobbler/blob/main/snippets/modules/filesystem): "common" file system snippet for [zerombr](https://github.com/FlossWare/cobbler/blob/main/snippets/options/zerombr), [ignoredisk](https://github.com/FlossWare/cobbler/blob/main/snippets/options/ignoredisk) and [bootloader](https://github.com/FlossWare/cobbler/blob/main/snippets/options/bootloader) options as well as calling the [disk_partition snippet](https://github.com/FlossWare/cobbler/blob/main/snippets/modules/disk_partition).
 
 *Please note we are investigating using [Cheetah defs](http://pythonhosted.org/Cheetah/users_guide/inheritanceEtc.html#def), per [issue #18](https://github.com/FlossWare/cobbler/issues/18), as a replacement for modules.*
 
@@ -105,7 +105,7 @@ For more information, see the [Fedora CoreOS documentation](https://docs.fedorap
 
 ### Ubuntu/Debian Support
 
-Ubuntu and Debian use [preseed](https://wiki.debian.org/DebianInstaller/Preseed) for automated installations. Preseed templates are available in the [preseed directory](https://github.com/FlossWare/cobbler/tree/master/preseed).
+Ubuntu and Debian use [preseed](https://wiki.debian.org/DebianInstaller/Preseed) for automated installations. Preseed templates are available in the [preseed directory](https://github.com/FlossWare/cobbler/tree/main/preseed).
 
 #### Setting up Debian/Ubuntu with Cobbler
 
@@ -202,7 +202,7 @@ During installation, press Alt+F4 to view logs, or check `/var/log/installer/` a
 
 ### FreeBSD Support
 
-FreeBSD uses bsdinstall with installscript format for automated installations. FreeBSD templates are available in the [freebsd directory](https://github.com/FlossWare/cobbler/tree/master/freebsd).
+FreeBSD uses bsdinstall with installscript format for automated installations. FreeBSD templates are available in the [freebsd directory](https://github.com/FlossWare/cobbler/tree/main/freebsd).
 
 #### Setting up FreeBSD with Cobbler
 
@@ -413,7 +413,7 @@ The kickstart templates will work without modification on RHEL 10, Rocky Linux 1
 
 #### Sections
 
-[Section snippets](https://github.com/FlossWare/cobbler/tree/master/snippets/sections) correspond to sections in kickstarts like [package](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-packages), [pre](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-preinstall), [post](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-postinstall) and [add ons](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-addon).  To define values on [sections](https://github.com/FlossWare/cobbler/tree/master/snippets/sections):
+[Section snippets](https://github.com/FlossWare/cobbler/tree/main/snippets/sections) correspond to sections in kickstarts like [package](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-packages), [pre](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-preinstall), [post](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-postinstall) and [add ons](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-addon).  To define values on [sections](https://github.com/FlossWare/cobbler/tree/main/snippets/sections):
 * For the section itself, simply define a ```ksmeta``` variable whose name represents the section and whose value is what to put on the section.  As an example:   ```ksmeta='post="--errorfail"'```
 * To provide a body, denote a [snippet](http://cobbler.github.io/manuals/2.6.0/3/6_-_Snippets.html) in your ```ksmeta``` variables that is named ```[section]_body```.  As an example:   ```ksmeta='post_body="flossware/sections/post_body/standard"'```
 
@@ -424,9 +424,9 @@ The kickstart templates will work without modification on RHEL 10, Rocky Linux 1
 #### Manual
 
 Clone this git repo and:
-* copy the contents of [kickstarts](https://github.com/FlossWare/cobbler/tree/master/kickstarts) to ```/var/lib/cobbler/kickstarts```.
+* copy the contents of [kickstarts](https://github.com/FlossWare/cobbler/tree/main/templates) to ```/var/lib/cobbler/kickstarts```.
 * create a ```/var/lib/cobbler/snippets/flossware``` directory.
-* copy the contents of [snippets](https://github.com/FlossWare/cobbler/tree/master/snippets) to ```/var/lib/cobbler/snippets/flossware```.
+* copy the contents of [snippets](https://github.com/FlossWare/cobbler/tree/main/snippets) to ```/var/lib/cobbler/snippets/flossware```.
 
 #### DNF/Yum Install
 
@@ -518,7 +518,7 @@ sudo apt-get install flossware-cobbler
 
 ### Default Use
 
-By default, the [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templates) and [snippets](https://github.com/FlossWare/cobbler/tree/master/snippets) can be used upon deployment with no additions to ```ksmeta```.
+By default, the [kickstarts](https://github.com/FlossWare/cobbler/tree/main/templates) and [snippets](https://github.com/FlossWare/cobbler/tree/main/snippets) can be used upon deployment with no additions to ```ksmeta```.
 
 **Default behavior:**
 - Root password: `cobbler` (you should change this!)
@@ -549,4 +549,4 @@ This will enable the `network` service and disable NetworkManager.
 
 ## Examples
 
-For more concrete examples, please see [Flossy's Cobbler Scripts](https://github.com/sfloess/scripts/blob/master/bash/cobbler.sh) for his home network.
+For more concrete examples, please see [Flossy's Cobbler Scripts](https://github.com/sfloess/scripts/blob/main/bash/cobbler.sh) for his home network.
