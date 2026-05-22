@@ -16,7 +16,7 @@
 ##
 
 #### FlossWare Preseed for Debian
-## Supports: Debian 11 (Bullseye), Debian 12 (Bookworm)
+## Supports: Debian 11 (Bullseye), Debian 12 (Bookworm), Debian 13 (Trixie)
 
 ### Localization
 d-i debian-installer/locale string en_US.UTF-8

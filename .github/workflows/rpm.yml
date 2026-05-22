@@ -72,6 +72,7 @@ jobs:
                   # Push to Debian repos
                   package_cloud push flossware/cobbler/debian/bullseye "${RPM_FILE}"
                   package_cloud push flossware/cobbler/debian/bookworm "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/debian/trixie "${RPM_FILE}"
 
                   # Push to Ubuntu repos
                   package_cloud push flossware/cobbler/ubuntu/jammy "${RPM_FILE}"

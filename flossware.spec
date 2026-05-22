@@ -75,7 +75,7 @@ rm -rf %{buildroot}
 - Updated to authselect from deprecated authconfig (RHEL 9/10 compatible)
 - Fixed modprobe configuration to use modprobe.d directory
 - Added support for RHEL 10 and Fedora 40+
-- Added Debian 11/12 and Ubuntu 22.04/24.04 preseed templates
+- Added Debian 11/12/13 and Ubuntu 22.04/24.04 preseed templates
 - Switched deployment from baltorepo.com to packagecloud.io
 - Modernized GitHub Actions workflow and build script
 - Cleaned up deprecated spec file tags (Group, BuildRoot)

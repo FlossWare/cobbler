@@ -22,7 +22,7 @@ All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templa
 - CentOS Stream 8, 9, 10
 
 *Debian Family (Preseed):*
-- Debian 11 (Bullseye), 12 (Bookworm)
+- Debian 11 (Bullseye), 12 (Bookworm), 13 (Trixie)
 - Ubuntu 22.04 LTS (Jammy), 24.04 LTS (Noble)
 
 **Note on Fedora CoreOS:** Fedora CoreOS uses Ignition for configuration, not traditional kickstart. See the [Fedora CoreOS Support](#fedora-coreos-support) section below for provisioning guidance.
@@ -44,7 +44,7 @@ As mentioned above, all [kickstarts](https://github.com/FlossWare/cobbler/tree/m
 For Debian and Ubuntu installations, preseed templates are available:
 
 * [flossware_ubuntu.preseed](https://github.com/FlossWare/cobbler/blob/master/preseed/flossware_ubuntu.preseed): For Ubuntu 22.04 LTS and 24.04 LTS
-* [flossware_debian.preseed](https://github.com/FlossWare/cobbler/blob/master/preseed/flossware_debian.preseed): For Debian 11 (Bullseye) and 12 (Bookworm)
+* [flossware_debian.preseed](https://github.com/FlossWare/cobbler/blob/master/preseed/flossware_debian.preseed): For Debian 11 (Bullseye), 12 (Bookworm), and 13 (Trixie)
 
 Preseed files use Debian Installer (d-i) syntax and are fundamentally different from kickstart templates.
 
@@ -108,6 +108,9 @@ cobbler import --name=ubuntu2404 --path=/mnt/ubuntu-24.04-server
 
 # Debian 12
 cobbler import --name=debian12 --path=/mnt/debian-12-amd64
+
+# Debian 13 (Trixie)
+cobbler import --name=debian13 --path=/mnt/debian-13-amd64
 ```
 
 **2. Create a profile using the preseed template:**
