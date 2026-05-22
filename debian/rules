@@ -1,0 +1,52 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	# Create directory structure
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/templates
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/autoinstall_templates
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/autoinstall_templates/freebsd
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/snippets/flossware
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/modules
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/modules/disk_partition_types
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/options
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections/addon_body
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections/anaconda_body
+	mkdir -p debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections/post_body
+
+	# Install kickstart templates
+	install -p -m 0755 templates/flossware_standard.ks debian/flossware-cobbler/var/lib/cobbler/templates/
+
+	# Install preseed templates
+	install -p -m 0755 preseed/flossware_ubuntu.preseed debian/flossware-cobbler/var/lib/cobbler/autoinstall_templates/
+	install -p -m 0755 preseed/flossware_debian.preseed debian/flossware-cobbler/var/lib/cobbler/autoinstall_templates/
+
+	# Install FreeBSD installscript templates
+	install -p -m 0755 freebsd/flossware_freebsd_ufs.installscript debian/flossware-cobbler/var/lib/cobbler/autoinstall_templates/freebsd/
+	install -p -m 0755 freebsd/flossware_freebsd_zfs.installscript debian/flossware-cobbler/var/lib/cobbler/autoinstall_templates/freebsd/
+
+	# Install kickstart entry point
+	install -p -m 0755 snippets/standard_kickstart debian/flossware-cobbler/var/lib/cobbler/snippets/flossware
+
+	# Install modules
+	install -p -m 0755 snippets/modules/common debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/modules
+	install -p -m 0755 snippets/modules/defined_disk_partition debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/modules
+	install -p -m 0755 snippets/modules/disk_partition debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/modules
+	install -p -m 0755 snippets/modules/filesystem debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/modules
+	install -p -m 0755 snippets/modules/disk_partition_types/* debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/modules/disk_partition_types
+
+	# Install options
+	install -p -m 0755 snippets/options/* debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/options
+
+	# Install sections
+	install -p -m 0755 snippets/sections/addon debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections
+	install -p -m 0755 snippets/sections/anaconda debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections
+	install -p -m 0755 snippets/sections/packages debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections
+	install -p -m 0755 snippets/sections/post debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections
+	install -p -m 0755 snippets/sections/pre debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections
+
+	# Install section bodies
+	install -p -m 0755 snippets/sections/post_body/standard debian/flossware-cobbler/var/lib/cobbler/snippets/flossware/sections/post_body

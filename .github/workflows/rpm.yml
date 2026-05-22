@@ -15,8 +15,8 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Install RPM build tools
-              run: sudo apt-get update && sudo apt-get install -y rpm
+            - name: Install build tools
+              run: sudo apt-get update && sudo apt-get install -y rpm debhelper dpkg-dev
 
             - name: Extract version information
               run: |
@@ -34,21 +34,37 @@ jobs:
               run: |
                   sed -i "s/^Release:.*$/Release:  ${NEW_RELEASE}/g" flossware.spec
 
+            - name: Update debian changelog version
+              run: |
+                  sed -i "1s/(.*)/($VERSION-$NEW_RELEASE)/" debian/changelog
+
             - name: Display updated spec
               run: cat flossware.spec
 
             - name: Build RPM
               run: ./buildrpm.sh
 
-            - name: Verify RPM was created
+            - name: Build DEB
+              run: ./builddeb.sh
+
+            - name: Verify packages were created
               run: |
                   RPM_FILE="/tmp/flossware/cobbler/RPMS/noarch/flossware-cobbler-${VERSION}-${NEW_RELEASE}.noarch.rpm"
+                  DEB_FILE="/tmp/flossware/cobbler/deb/flossware-cobbler_1.0-${NEW_RELEASE}_all.deb"
+
                   if [ ! -f "${RPM_FILE}" ]; then
                     echo "ERROR: RPM not found: ${RPM_FILE}"
                     exit 1
                   fi
-                  echo "Successfully built: ${RPM_FILE}"
+                  echo "Successfully built RPM: ${RPM_FILE}"
                   rpm -qip "${RPM_FILE}"
+
+                  if [ ! -f "${DEB_FILE}" ]; then
+                    echo "ERROR: DEB not found: ${DEB_FILE}"
+                    exit 1
+                  fi
+                  echo "Successfully built DEB: ${DEB_FILE}"
+                  dpkg -I "${DEB_FILE}"
 
             - name: Install packagecloud CLI
               run: gem install package_cloud
@@ -58,27 +74,28 @@ jobs:
                 PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
               run: |
                   RPM_FILE="/tmp/flossware/cobbler/RPMS/noarch/flossware-cobbler-${VERSION}-${NEW_RELEASE}.noarch.rpm"
+                  DEB_FILE="/tmp/flossware/cobbler/deb/flossware-cobbler_1.0-${NEW_RELEASE}_all.deb"
 
-                  # Push to RHEL/CentOS/Rocky/Alma repos
+                  # Push RPM to RHEL/CentOS/Rocky/Alma repos
                   package_cloud push flossware/cobbler/el/8 "${RPM_FILE}"
                   package_cloud push flossware/cobbler/el/9 "${RPM_FILE}"
                   package_cloud push flossware/cobbler/el/10 "${RPM_FILE}"
 
-                  # Push to Fedora repos
+                  # Push RPM to Fedora repos
                   package_cloud push flossware/cobbler/fedora/38 "${RPM_FILE}"
                   package_cloud push flossware/cobbler/fedora/39 "${RPM_FILE}"
                   package_cloud push flossware/cobbler/fedora/40 "${RPM_FILE}"
 
-                  # Push to Debian repos
-                  package_cloud push flossware/cobbler/debian/bullseye "${RPM_FILE}"
-                  package_cloud push flossware/cobbler/debian/bookworm "${RPM_FILE}"
-                  package_cloud push flossware/cobbler/debian/trixie "${RPM_FILE}"
+                  # Push DEB to Debian repos
+                  package_cloud push flossware/cobbler/debian/bullseye "${DEB_FILE}"
+                  package_cloud push flossware/cobbler/debian/bookworm "${DEB_FILE}"
+                  package_cloud push flossware/cobbler/debian/trixie "${DEB_FILE}"
 
-                  # Push to Ubuntu repos
-                  package_cloud push flossware/cobbler/ubuntu/jammy "${RPM_FILE}"
-                  package_cloud push flossware/cobbler/ubuntu/noble "${RPM_FILE}"
+                  # Push DEB to Ubuntu repos
+                  package_cloud push flossware/cobbler/ubuntu/jammy "${DEB_FILE}"
+                  package_cloud push flossware/cobbler/ubuntu/noble "${DEB_FILE}"
 
-                  echo "Successfully deployed to packagecloud.io"
+                  echo "Successfully deployed RPM and DEB packages to packagecloud.io"
 
             - name: Commit version bump
               run: |

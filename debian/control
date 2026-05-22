@@ -1,0 +1,18 @@
+Source: flossware-cobbler
+Section: admin
+Priority: optional
+Maintainer: FlossWare <sfloess@redhat.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.8
+Homepage: https://github.com/FlossWare/cobbler
+
+Package: flossware-cobbler
+Architecture: all
+Depends: ${misc:Depends}
+Recommends: cobbler
+Description: A set of kickstarts and snippets for cobbler
+ A set of kickstarts and snippets for cobbler supporting modern distributions:
+ - Fedora 38-40+
+ - RHEL 8/9/10 and derivatives (Rocky Linux, AlmaLinux, CentOS Stream)
+ - Ubuntu/Debian (via preseed templates)
+ - FreeBSD 13.x, 14.x (via installscript templates)

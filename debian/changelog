@@ -1,0 +1,15 @@
+flossware-cobbler (1.0-40) stable; urgency=medium
+
+  * BREAKING: Removed all Atomic Host support (discontinued upstream)
+  * Updated to systemctl from deprecated chkconfig (required for RHEL 10)
+  * Updated to authselect from deprecated authconfig (RHEL 9/10 compatible)
+  * Fixed modprobe configuration to use modprobe.d directory
+  * Added support for RHEL 10 and Fedora 40+
+  * Added Debian 11/12/13 and Ubuntu 22.04/24.04 preseed templates
+  * Added FreeBSD 13.x/14.x installscript templates (UFS and ZFS)
+  * Switched deployment from baltorepo.com to packagecloud.io
+  * Modernized GitHub Actions workflow and build script
+  * Cleaned up deprecated spec file tags (Group, BuildRoot)
+  * Removed destructive pre-install hook
+
+ -- FlossWare <sfloess@redhat.com>  Thu, 22 May 2026 12:00:00 -0400
