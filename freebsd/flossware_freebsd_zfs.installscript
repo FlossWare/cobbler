@@ -1,0 +1,180 @@
+#!/bin/sh
+##
+## Copyright (C) 2024 flossware
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+
+#### FlossWare FreeBSD Installscript - ZFS
+## Supports: FreeBSD 13.x, 14.x
+## Filesystem: ZFS with GPT partitioning
+
+# Non-interactive installation
+export nonInteractive="YES"
+
+# Distribution sets to install
+DISTRIBUTIONS="kernel.txz base.txz"
+
+# Optional distribution sets (uncomment as needed)
+# DISTRIBUTIONS="$DISTRIBUTIONS lib32.txz"
+# DISTRIBUTIONS="$DISTRIBUTIONS ports.txz"
+# DISTRIBUTIONS="$DISTRIBUTIONS src.txz"
+
+# Disk to use for installation (default: first disk)
+: ${INSTALL_DISK:=$install_disk}
+: ${INSTALL_DISK:=ada0}
+
+# ZFS pool name
+: ${ZPOOL_NAME:=$zpool_name}
+: ${ZPOOL_NAME:=zroot}
+
+# Hostname (Cobbler variable)
+: ${HOSTNAME:=$hostname}
+: ${HOSTNAME:=freebsd}
+
+# Network configuration (Cobbler variables)
+: ${INTERFACE:=$interface}
+: ${INTERFACE:=em0}
+: ${IP_ADDRESS:=$ip_address}
+: ${NETMASK:=$netmask}
+: ${GATEWAY:=$gateway}
+: ${NAMESERVER:=$name_servers}
+
+#### ZFS Partitioning Script ####
+PARTITIONS="$INSTALL_DISK"
+
+cat > /tmp/zfs-partition.sh << 'PARTITION_EOF'
+#!/bin/sh
+DISK=$1
+POOL=$2
+
+# Destroy existing partition scheme
+gpart destroy -F ${DISK} || true
+
+# Create GPT partition scheme
+gpart create -s gpt ${DISK}
+
+# Create boot partition (512KB)
+gpart add -t freebsd-boot -s 512k -l boot ${DISK}
+
+# Create swap partition (4GB)
+gpart add -t freebsd-swap -s 4G -l swap ${DISK}
+
+# Create ZFS partition (remaining space)
+gpart add -t freebsd-zfs -l zfs ${DISK}
+
+# Install bootcode
+gpart bootcode -b /boot/pmbr -p /boot/gptzfsboot -i 1 ${DISK}
+
+# Create ZFS pool
+zpool create -f -o altroot=/mnt -O compress=lz4 -O atime=off -O checksum=fletcher4 -m none ${POOL} gpt/zfs
+
+# Create ZFS datasets
+zfs create -o mountpoint=none ${POOL}/ROOT
+zfs create -o mountpoint=/ ${POOL}/ROOT/default
+zfs create -o mountpoint=/tmp -o exec=on -o setuid=off ${POOL}/tmp
+zfs create -o mountpoint=/usr -o canmount=off ${POOL}/usr
+zfs create ${POOL}/usr/home
+zfs create -o setuid=off ${POOL}/usr/ports
+zfs create ${POOL}/usr/src
+zfs create -o mountpoint=/var -o canmount=off ${POOL}/var
+zfs create -o exec=off -o setuid=off ${POOL}/var/audit
+zfs create -o exec=off -o setuid=off ${POOL}/var/crash
+zfs create -o exec=off -o setuid=off ${POOL}/var/log
+zfs create -o atime=on ${POOL}/var/mail
+zfs create -o setuid=off ${POOL}/var/tmp
+
+# Set bootfs property
+zpool set bootfs=${POOL}/ROOT/default ${POOL}
+
+# Set permissions on tmp
+chmod 1777 /mnt/tmp
+chmod 1777 /mnt/var/tmp
+
+# Create home symlink
+ln -s /usr/home /mnt/home
+PARTITION_EOF
+
+chmod +x /tmp/zfs-partition.sh
+/tmp/zfs-partition.sh $INSTALL_DISK $ZPOOL_NAME
+
+#### Post-Installation Configuration ####
+cat > /tmp/zfs-config << 'CONFIG_EOF'
+#!/bin/sh
+
+# Enable ZFS in rc.conf
+sysrc zfs_enable="YES"
+
+# Hostname configuration
+sysrc hostname="${HOSTNAME}"
+
+# Network configuration
+sysrc ifconfig_${INTERFACE}="inet ${IP_ADDRESS} netmask ${NETMASK}"
+sysrc defaultrouter="${GATEWAY}"
+echo "nameserver ${NAMESERVER}" > /etc/resolv.conf
+
+# Enable SSH daemon
+sysrc sshd_enable="YES"
+
+# Enable ntpd for time synchronization
+sysrc ntpd_enable="YES"
+
+# Enable periodic security checks
+sysrc daily_status_security_enable="YES"
+
+# ZFS specific settings
+sysrc zfs_enable="YES"
+
+# Set timezone (default to UTC)
+ln -sf /usr/share/zoneinfo/${TIMEZONE:-UTC} /etc/localtime
+
+# Configure ZFS in loader
+cat >> /boot/loader.conf << LOADER_EOF
+zfs_load="YES"
+vfs.root.mountfrom="zfs:${ZPOOL_NAME}/ROOT/default"
+LOADER_EOF
+
+# Update package repository
+env ASSUME_ALWAYS_YES=YES pkg bootstrap
+
+# Install basic packages
+pkg install -y vim curl wget bash sudo
+
+# Configure sudo for wheel group
+echo "%wheel ALL=(ALL) ALL" >> /usr/local/etc/sudoers
+
+# Root password setup
+echo '${ROOT_PASSWORD_HASH:-$6$rounds=5000$flossware$pZqxvK8F3VNzHkzJ8xQl4qJ5.rC8YvN9QxMFN5VPZqZFXJZQVZFXJZQVZFXJZQVZFXJZQVZFXJZQVZFXJZQVZ}' | pw usermod root -H 0
+
+# Enable kernel crash dumps to ZFS
+sysrc dumpdev="AUTO"
+
+# ZFS snapshot of clean installation
+zfs snapshot ${ZPOOL_NAME}/ROOT/default@install
+
+# Log installation completion
+echo "FreeBSD ZFS installation completed at $(date)" > /var/log/flossware-install.log
+echo "Hostname: ${HOSTNAME}" >> /var/log/flossware-install.log
+echo "IP Address: ${IP_ADDRESS}" >> /var/log/flossware-install.log
+echo "ZFS Pool: ${ZPOOL_NAME}" >> /var/log/flossware-install.log
+CONFIG_EOF
+
+# Execute post-installation in chroot
+chroot /mnt /bin/sh /tmp/zfs-config
+
+# Export pool before reboot
+zpool export $ZPOOL_NAME
+
+# Reboot
+reboot

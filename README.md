@@ -25,6 +25,9 @@ All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templa
 - Debian 11 (Bullseye), 12 (Bookworm), 13 (Trixie)
 - Ubuntu 22.04 LTS (Jammy), 24.04 LTS (Noble)
 
+*BSD Family (Installscript):*
+- FreeBSD 13.x, 14.x (UFS and ZFS options)
+
 **Note on Fedora CoreOS:** Fedora CoreOS uses Ignition for configuration, not traditional kickstart. See the [Fedora CoreOS Support](#fedora-coreos-support) section below for provisioning guidance.
 
 **Note on Atomic Host:** The old Atomic Host kickstart templates (Fedora/CentOS/RHEL Atomic) have been **removed** as Atomic Host has been discontinued. For container-optimized systems, use Fedora CoreOS or RHEL CoreOS instead.
@@ -47,6 +50,15 @@ For Debian and Ubuntu installations, preseed templates are available:
 * [flossware_debian.preseed](https://github.com/FlossWare/cobbler/blob/master/preseed/flossware_debian.preseed): For Debian 11 (Bullseye), 12 (Bookworm), and 13 (Trixie)
 
 Preseed files use Debian Installer (d-i) syntax and are fundamentally different from kickstart templates.
+
+#### FreeBSD Installscript Templates
+
+For FreeBSD installations, installscript templates are available:
+
+* [flossware_freebsd_ufs.installscript](https://github.com/FlossWare/cobbler/blob/master/freebsd/flossware_freebsd_ufs.installscript): For FreeBSD 13.x/14.x with UFS filesystem
+* [flossware_freebsd_zfs.installscript](https://github.com/FlossWare/cobbler/blob/master/freebsd/flossware_freebsd_zfs.installscript): For FreeBSD 13.x/14.x with ZFS filesystem
+
+FreeBSD installscripts use bsdinstall format and are fundamentally different from both kickstart and preseed templates.
 
 #### Options
 
@@ -188,6 +200,147 @@ cobbler profile edit --name=ubuntu-server \
 
 **View installation logs:**
 During installation, press Alt+F4 to view logs, or check `/var/log/installer/` after installation.
+
+### FreeBSD Support
+
+FreeBSD uses bsdinstall with installscript format for automated installations. FreeBSD templates are available in the [freebsd directory](https://github.com/FlossWare/cobbler/tree/master/freebsd).
+
+#### Setting up FreeBSD with Cobbler
+
+**1. Import the FreeBSD distribution:**
+```bash
+# FreeBSD 13.x
+cobbler import --name=freebsd13 --path=/mnt/freebsd-13-amd64 --breed=freebsd
+
+# FreeBSD 14.x
+cobbler import --name=freebsd14 --path=/mnt/freebsd-14-amd64 --breed=freebsd
+```
+
+**2. Create a profile using the installscript template:**
+
+For UFS filesystem:
+```bash
+cobbler profile add \
+    --name=freebsd-ufs \
+    --distro=freebsd14-x86_64 \
+    --autoinstall=freebsd/flossware_freebsd_ufs.installscript \
+    --breed=freebsd
+```
+
+For ZFS filesystem (recommended):
+```bash
+cobbler profile add \
+    --name=freebsd-zfs \
+    --distro=freebsd14-x86_64 \
+    --autoinstall=freebsd/flossware_freebsd_zfs.installscript \
+    --breed=freebsd
+```
+
+**3. Customize with autoinstall_meta (FreeBSD variables):**
+```bash
+cobbler profile edit --name=freebsd-zfs \
+    --autoinstall-meta="hostname=freebsd-node1 \
+                        interface=em0 \
+                        ip_address=192.168.1.100 \
+                        netmask=255.255.255.0 \
+                        gateway=192.168.1.1 \
+                        name_servers=8.8.8.8 \
+                        install_disk=ada0 \
+                        zpool_name=zroot \
+                        timezone=America/New_York"
+```
+
+**4. Create a system:**
+```bash
+cobbler system add \
+    --name=freebsd-node1 \
+    --profile=freebsd-zfs \
+    --hostname=freebsd-node1 \
+    --interface=em0 \
+    --mac=00:11:22:33:44:55 \
+    --ip-address=192.168.1.100 \
+    --netmask=255.255.255.0 \
+    --gateway=192.168.1.1
+```
+
+#### FreeBSD Installscript Variables
+
+The FreeBSD templates support these Cobbler template variables:
+
+**Common Variables:**
+- `$hostname` - System hostname
+- `$interface` - Network interface (default: em0)
+- `$ip_address` - Static IP address
+- `$netmask` - Network mask
+- `$gateway` - Default gateway
+- `$name_servers` - DNS servers
+- `$install_disk` - Target disk (default: ada0)
+- `$timezone` - Timezone (default: UTC)
+- `$root_password_hash` - Root password hash
+
+**ZFS-Specific Variables:**
+- `$zpool_name` - ZFS pool name (default: zroot)
+
+**Example:** Setting a custom root password:
+```bash
+# Generate password hash
+PASSWORD_HASH=$(echo "YourPassword" | openssl passwd -6 -stdin)
+
+# Set in profile
+cobbler profile edit --name=freebsd-zfs \
+    --autoinstall-meta="root_password_hash='${PASSWORD_HASH}'"
+```
+
+#### UFS vs ZFS
+
+**UFS (Unix File System):**
+- ✅ Traditional, stable, well-tested
+- ✅ Lower memory overhead
+- ✅ Simpler for small installations
+- ❌ No snapshots, compression, or data integrity features
+
+**ZFS (Recommended):**
+- ✅ Advanced features: snapshots, compression, data integrity
+- ✅ Copy-on-write filesystem
+- ✅ Built-in RAID support
+- ✅ Automatic snapshot on installation
+- ⚠️ Requires more RAM (minimum 4GB recommended)
+
+#### FreeBSD Package Management
+
+Both templates install basic packages via pkg:
+- vim, curl, wget, bash, sudo
+
+**Add more packages:**
+Modify the installscript `pkg install -y` line or add a post-install script.
+
+#### Differences from Kickstart/Preseed
+
+FreeBSD installscripts have important differences:
+
+- **Format**: Shell script executed during installation
+- **Partitioning**: Uses `gpart` instead of parted/partman
+- **Filesystems**: UFS or ZFS instead of ext4/xfs
+- **Services**: rc.conf with `sysrc` instead of systemctl
+- **Packages**: pkg instead of dnf/apt
+- **Location**: Installed to `/var/lib/cobbler/autoinstall_templates/freebsd/`
+
+#### Troubleshooting
+
+**Enable installation debugging:**
+```bash
+# Boot FreeBSD installer manually
+# Press '3' for shell access during installation
+# Check logs in /tmp/
+```
+
+**Common issues:**
+- **Disk not found**: Check `install_disk` variable matches your hardware (ada0, da0, nvd0)
+- **Network interface**: Verify interface name (em0, igb0, re0) matches your hardware
+- **ZFS memory**: Ensure system has at least 4GB RAM for ZFS installations
+
+**View installation logs:**
+After installation, check `/var/log/flossware-install.log` on the FreeBSD system.
 
 ### Migration Guide
 

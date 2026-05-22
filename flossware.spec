@@ -13,6 +13,7 @@ A set of kickstarts and snippets for cobbler supporting modern distributions:
 - Fedora 38-40+
 - RHEL 8/9/10 and derivatives (Rocky Linux, AlmaLinux, CentOS Stream)
 - Ubuntu/Debian (via preseed templates)
+- FreeBSD 13.x, 14.x (via installscript templates)
 
 %prep
 %setup -q
@@ -23,6 +24,7 @@ A set of kickstarts and snippets for cobbler supporting modern distributions:
 %{__rm} -rf %{buildroot}
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/templates
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/autoinstall_templates
+%{__mkdir_p} %{buildroot}/var/lib/cobbler/autoinstall_templates/freebsd
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/modules/disk_partition_types
@@ -38,6 +40,10 @@ A set of kickstarts and snippets for cobbler supporting modern distributions:
 # Install preseed templates for Debian/Ubuntu
 %{__install} -p -m 0755 preseed/flossware_ubuntu.preseed %{buildroot}/var/lib/cobbler/autoinstall_templates/
 %{__install} -p -m 0755 preseed/flossware_debian.preseed %{buildroot}/var/lib/cobbler/autoinstall_templates/
+
+# Install FreeBSD installscript templates
+%{__install} -p -m 0755 freebsd/flossware_freebsd_ufs.installscript %{buildroot}/var/lib/cobbler/autoinstall_templates/freebsd/
+%{__install} -p -m 0755 freebsd/flossware_freebsd_zfs.installscript %{buildroot}/var/lib/cobbler/autoinstall_templates/freebsd/
 
 # Install kickstart entry point (only standard, atomic variants removed)
 %{__install} -p -m 0755 snippets/standard_kickstart %{buildroot}/var/lib/cobbler/snippets/flossware
@@ -76,6 +82,7 @@ rm -rf %{buildroot}
 - Fixed modprobe configuration to use modprobe.d directory
 - Added support for RHEL 10 and Fedora 40+
 - Added Debian 11/12/13 and Ubuntu 22.04/24.04 preseed templates
+- Added FreeBSD 13.x/14.x installscript templates (UFS and ZFS)
 - Switched deployment from baltorepo.com to packagecloud.io
 - Modernized GitHub Actions workflow and build script
 - Cleaned up deprecated spec file tags (Group, BuildRoot)

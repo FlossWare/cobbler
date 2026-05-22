@@ -1,0 +1,137 @@
+#!/bin/sh
+##
+## Copyright (C) 2024 flossware
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+
+#### FlossWare FreeBSD Installscript - UFS
+## Supports: FreeBSD 13.x, 14.x
+## Filesystem: UFS with GPT partitioning
+
+# Non-interactive installation
+export nonInteractive="YES"
+
+# Distribution sets to install
+DISTRIBUTIONS="kernel.txz base.txz"
+
+# Optional distribution sets (uncomment as needed)
+# DISTRIBUTIONS="$DISTRIBUTIONS lib32.txz"
+# DISTRIBUTIONS="$DISTRIBUTIONS ports.txz"
+# DISTRIBUTIONS="$DISTRIBUTIONS src.txz"
+
+# Disk to use for installation (default: first disk)
+# Cobbler can override with $install_disk variable
+: ${INSTALL_DISK:=$install_disk}
+: ${INSTALL_DISK:=ada0}
+
+# Hostname (Cobbler variable)
+: ${HOSTNAME:=$hostname}
+: ${HOSTNAME:=freebsd}
+
+# Network configuration (Cobbler variables)
+: ${INTERFACE:=$interface}
+: ${INTERFACE:=em0}
+: ${IP_ADDRESS:=$ip_address}
+: ${NETMASK:=$netmask}
+: ${GATEWAY:=$gateway}
+: ${NAMESERVER:=$name_servers}
+
+#### Partitioning Script ####
+PARTITIONS="$INSTALL_DISK"
+
+# GPT partitioning with UFS
+cat > /tmp/partition.sh << 'PARTITION_EOF'
+#!/bin/sh
+DISK=$1
+
+# Destroy existing partition scheme
+gpart destroy -F ${DISK} || true
+
+# Create GPT partition scheme
+gpart create -s gpt ${DISK}
+
+# Create boot partition (512KB)
+gpart add -t freebsd-boot -s 512k -l bootfs ${DISK}
+
+# Create swap partition (4GB)
+gpart add -t freebsd-swap -s 4G -l swapfs ${DISK}
+
+# Create root partition (remaining space)
+gpart add -t freebsd-ufs -l rootfs ${DISK}
+
+# Install bootcode
+gpart bootcode -b /boot/pmbr -p /boot/gptboot -i 1 ${DISK}
+
+# Format root partition with UFS
+newfs -U /dev/gpt/rootfs
+
+# Mount root filesystem
+mount /dev/gpt/rootfs /mnt
+PARTITION_EOF
+
+chmod +x /tmp/partition.sh
+/tmp/partition.sh $INSTALL_DISK
+
+#### Post-Installation Configuration ####
+cat > /tmp/installerconfig << 'CONFIG_EOF'
+
+# Hostname configuration
+sysrc hostname="${HOSTNAME}"
+
+# Network configuration
+sysrc ifconfig_${INTERFACE}="inet ${IP_ADDRESS} netmask ${NETMASK}"
+sysrc defaultrouter="${GATEWAY}"
+echo "nameserver ${NAMESERVER}" > /etc/resolv.conf
+
+# Enable SSH daemon
+sysrc sshd_enable="YES"
+
+# Enable ntpd for time synchronization
+sysrc ntpd_enable="YES"
+
+# Enable periodic security checks
+sysrc daily_status_security_enable="YES"
+
+# Set timezone (default to UTC, override with $timezone)
+ln -sf /usr/share/zoneinfo/${TIMEZONE:-UTC} /etc/localtime
+
+# Update package repository
+env ASSUME_ALWAYS_YES=YES pkg bootstrap
+
+# Install basic packages
+pkg install -y vim curl wget bash sudo
+
+# Configure sudo for wheel group
+echo "%wheel ALL=(ALL) ALL" >> /usr/local/etc/sudoers
+
+# Root password setup
+# Default: freebsd (hash generated with: echo "freebsd" | pw usermod root -h 0)
+# Override with $root_password_hash from Cobbler
+echo '${ROOT_PASSWORD_HASH:-$6$rounds=5000$flossware$pZqxvK8F3VNzHkzJ8xQl4qJ5.rC8YvN9QxMFN5VPZqZFXJZQVZFXJZQVZFXJZQVZFXJZQVZFXJZQVZFXJZQVZ}' | pw usermod root -H 0
+
+# Enable kernel crash dumps
+sysrc dumpdev="AUTO"
+
+# Log installation completion
+echo "FreeBSD UFS installation completed at $(date)" > /var/log/flossware-install.log
+echo "Hostname: ${HOSTNAME}" >> /var/log/flossware-install.log
+echo "IP Address: ${IP_ADDRESS}" >> /var/log/flossware-install.log
+CONFIG_EOF
+
+# Execute post-installation in chroot
+chroot /mnt /bin/sh /tmp/installerconfig
+
+# Reboot
+reboot
