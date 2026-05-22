@@ -17,8 +17,11 @@
 
 /bin/dbus-uuidgen > /var/lib/dbus/machine-id
 
-#set $maxLoop=$getVar('maxLoop', '') and ('echo "options loop max_loop=' + $getVar('maxLoop') + '" >> /etc/modprobe.conf') or ''
+## Modern modprobe.d configuration instead of deprecated /etc/modprobe.conf
+#set $maxLoop=$getVar('maxLoop', '') and ('echo "options loop max_loop=' + $getVar('maxLoop') + '" > /etc/modprobe.d/loop.conf') or ''
 $maxLoop
 
-#set $authconfig=$getVar('authconfig', '') and ('/usr/sbin/authconfig --update ' + $getVar('authconfig')) or ''
+## authconfig is removed in RHEL 9/10 and Fedora 38+. Use authselect with backward compatibility.
+## This checks for authselect first (RHEL 9/10, Fedora 38+), falls back to authconfig if available (RHEL 8)
+#set $authconfig=$getVar('authconfig', '') and ('if [ -x /usr/bin/authselect ]; then /usr/bin/authselect select sssd --force; elif [ -x /usr/sbin/authconfig ]; then /usr/sbin/authconfig --update ' + $getVar('authconfig') + '; fi') or ''
 $authconfig

@@ -13,37 +13,65 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
 
-            - name: Preparing environment
-              run: sudo apt-get update
+            - name: Install RPM build tools
+              run: sudo apt-get update && sudo apt-get install -y rpm
 
-            - name: Compute version
-              run: echo "VERSION=`cat flossware.spec | egrep Version | cut -f 2 -d ':' | tr -d ' '`" >> $GITHUB_ENV
-
-            - name: Compute old release version
-              run: echo "OLD_RELEASE=`cat flossware.spec | egrep Release | cut -f 2 -d ':' | tr -d ' '`" >> $GITHUB_ENV
-
-            - name: Compute new release
-              run: echo "NEW_RELEASE=`expr ${OLD_RELEASE} + 1`" >> $GITHUB_ENV
-
-              
-            - name: Update spec version
+            - name: Extract version information
               run: |
-                  sed -i "s/Release: .*/Release:  ${NEW_RELEASE}/g" flossware.spec
+                  VERSION=$(rpm -q --queryformat '%{VERSION}\n' --specfile flossware.spec | head -1)
+                  OLD_RELEASE=$(rpm -q --queryformat '%{RELEASE}\n' --specfile flossware.spec | head -1)
+                  NEW_RELEASE=$((OLD_RELEASE + 1))
 
-            - name: New spec file
-              run:  cat flossware.spec
+                  echo "VERSION=${VERSION}" >> $GITHUB_ENV
+                  echo "OLD_RELEASE=${OLD_RELEASE}" >> $GITHUB_ENV
+                  echo "NEW_RELEASE=${NEW_RELEASE}" >> $GITHUB_ENV
 
-            - name: Build rpm
+                  echo "Building version ${VERSION}-${NEW_RELEASE}"
+
+            - name: Update spec file release
               run: |
-                  ./buildrpm.sh
+                  sed -i "s/^Release:.*$/Release:  ${NEW_RELEASE}/g" flossware.spec
 
-            - name: Deploy to baltorepo
+            - name: Display updated spec
+              run: cat flossware.spec
+
+            - name: Build RPM
+              run: ./buildrpm.sh
+
+            - name: Verify RPM was created
               run: |
-                  curl --header "Authorization: Bearer ${{ secrets.BALTO_REPO_API_TOKEN }}" --form "package=@/tmp/flossware/cobbler/RPMS/noarch/flossware-cobbler-${VERSION}-${NEW_RELEASE}.noarch.rpm" --form "readme=README.md" https://flossware.baltorepo.com/cobbler/rpm/upload/
+                  RPM_FILE="/tmp/flossware/cobbler/RPMS/noarch/flossware-cobbler-${VERSION}-${NEW_RELEASE}.noarch.rpm"
+                  if [ ! -f "${RPM_FILE}" ]; then
+                    echo "ERROR: RPM not found: ${RPM_FILE}"
+                    exit 1
+                  fi
+                  echo "Successfully built: ${RPM_FILE}"
+                  rpm -qip "${RPM_FILE}"
 
-            - name: Commit files
+            - name: Install packagecloud CLI
+              run: gem install package_cloud
+
+            - name: Deploy to packagecloud.io
+              env:
+                PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
+              run: |
+                  RPM_FILE="/tmp/flossware/cobbler/RPMS/noarch/flossware-cobbler-${VERSION}-${NEW_RELEASE}.noarch.rpm"
+
+                  # Push to RHEL/CentOS/Rocky/Alma repos
+                  package_cloud push flossware/cobbler/el/8 "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/el/9 "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/el/10 "${RPM_FILE}"
+
+                  # Push to Fedora repos
+                  package_cloud push flossware/cobbler/fedora/38 "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/fedora/39 "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/fedora/40 "${RPM_FILE}"
+
+                  echo "Successfully deployed to packagecloud.io"
+
+            - name: Commit version bump
               run: |
                   git config --local user.email "noreply@flossware.org"
                   git config --local user.name "GitHub Workflow"

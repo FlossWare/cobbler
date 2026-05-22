@@ -4,14 +4,15 @@ Version:  1.0
 Release:  39
 URL: https://github.com/FlossWare/cobbler
 License: GPLv3
-Group: Applications/Systems
 Source0: %{name}-%{version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 #Requires: cobbler
 
 %description
-A set of kickstarts and snippets for cobbler.
+A set of kickstarts and snippets for cobbler supporting modern distributions:
+- Fedora 38-40+
+- RHEL 8/9/10 and derivatives (Rocky Linux, AlmaLinux, CentOS Stream)
+- Ubuntu/Debian (via preseed templates)
 
 %prep
 %setup -q
@@ -30,27 +31,27 @@ A set of kickstarts and snippets for cobbler.
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/sections/anaconda_body
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/sections/post_body
 
-%{__install} -p -m 0755 templates/* %{buildroot}/var/lib/cobbler/templates/
-%{__install} -p -m 0755 snippets/*_kickstart %{buildroot}/var/lib/cobbler/snippets/flossware
-%{__install} -p -m 0755 snippets/modules/atomic %{buildroot}/var/lib/cobbler/snippets/flossware/modules
+# Install templates (only standard, atomic variants removed)
+%{__install} -p -m 0755 templates/flossware_standard.ks %{buildroot}/var/lib/cobbler/templates/
+
+# Install kickstart entry point (only standard, atomic variants removed)
+%{__install} -p -m 0755 snippets/standard_kickstart %{buildroot}/var/lib/cobbler/snippets/flossware
+# Install modules (atomic module removed)
 %{__install} -p -m 0755 snippets/modules/common %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__install} -p -m 0755 snippets/modules/defined_disk_partition %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__install} -p -m 0755 snippets/modules/disk_partition %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__install} -p -m 0755 snippets/modules/filesystem %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__install} -p -m 0755 snippets/modules/disk_partition_types/* %{buildroot}/var/lib/cobbler/snippets/flossware/modules/disk_partition_types
 %{__install} -p -m 0755 snippets/options/* %{buildroot}/var/lib/cobbler/snippets/flossware/options
+# Install sections
 %{__install} -p -m 0755 snippets/sections/addon %{buildroot}/var/lib/cobbler/snippets/flossware/sections
 %{__install} -p -m 0755 snippets/sections/anaconda %{buildroot}/var/lib/cobbler/snippets/flossware/sections
 %{__install} -p -m 0755 snippets/sections/packages %{buildroot}/var/lib/cobbler/snippets/flossware/sections
 %{__install} -p -m 0755 snippets/sections/post %{buildroot}/var/lib/cobbler/snippets/flossware/sections
 %{__install} -p -m 0755 snippets/sections/pre %{buildroot}/var/lib/cobbler/snippets/flossware/sections
-%{__install} -p -m 0755 snippets/sections/addon_body/* %{buildroot}/var/lib/cobbler/snippets/flossware/sections/addon_body
-%{__install} -p -m 0755 snippets/sections/anaconda_body/* %{buildroot}/var/lib/cobbler/snippets/flossware/sections/anaconda_body
-%{__install} -p -m 0755 snippets/sections/post_body/* %{buildroot}/var/lib/cobbler/snippets/flossware/sections/post_body
 
-%pre
-rm -f /var/lib/cobbler/templates
-rm -rf /var/lib/cobbler/snippets/flossware
+# Install section bodies (only standard, atomic variants removed)
+%{__install} -p -m 0755 snippets/sections/post_body/standard %{buildroot}/var/lib/cobbler/snippets/flossware/sections/post_body
 
 %preun
 
@@ -62,6 +63,15 @@ rm -rf %{buildroot}
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware
 
 %changelog
+* Thu May 22 2026 Modernization <github-action@noreply.com> 1.0-38
+- BREAKING: Removed all Atomic Host support (discontinued upstream)
+- Updated to systemctl from deprecated chkconfig (required for RHEL 10)
+- Updated to authselect from deprecated authconfig (RHEL 9/10 compatible)
+- Fixed modprobe configuration to use modprobe.d directory
+- Added support for RHEL 10 and Fedora 40+
+- Modernized GitHub Actions workflow and build script
+- Cleaned up deprecated spec file tags (Group, BuildRoot)
+- Removed destructive pre-install hook
 * Sat Sep 26 2020 Action <github-action@noreply.com> 1.0-37
 - No changes.
 * Sat Sep 26 2020 Action <github-action@noreply.com> 1.0-36

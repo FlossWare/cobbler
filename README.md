@@ -8,19 +8,20 @@ Welcome to the FlossWare [Cobbler](http://cobbler.github.io/) [kickstarts](http:
 
 ### Kickstarts
 
-All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/kickstarts) are simple wrappers that call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/master/snippets) of a similar name (without the ```flossware_``` prefix and ```.ks``` file extension):
-* [flossware_centos_atomic.ks](https://github.com/FlossWare/cobbler/blob/master/kickstarts/flossware_centos_atomic.ks):  kickstarting template for CentOS Atomic.
-* [flossware_fedora_atomic.ks](https://github.com/FlossWare/cobbler/blob/master/kickstarts/flossware_fedora_atomic.ks):  kickstarting template for Fedora Atomic.
-* [flossware_rhel_atomic.ks](https://github.com/FlossWare/cobbler/blob/master/kickstarts/flossware_rhel_atomic.ks):  kickstarting template for RHEL Atomic.
-* [flossware_standard.ks](https://github.com/FlossWare/cobbler/blob/master/kickstarts/flossware_standard.ks):  standard kickstarting template for "normal" bare metal or VMs.
+All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templates) are simple wrappers that call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/master/snippets):
 
-**Please note**  there is some uniqueness when templating Atomic kickstarts:
-* No ```package``` section
-* An ```ostreesetup``` option
-* Each Atomic instance performs different operations in their respective ```post``` sections.
-* The Fedora Atomic image uses ```addon``` and  ```anaconda``` sections.
+* [flossware_standard.ks](https://github.com/FlossWare/cobbler/blob/master/templates/flossware_standard.ks): Standard kickstart template for modern Linux distributions.
 
-Our initial work with Atomic kickstarts was performed by manually installing each image and reviewing the generated kickstart after the install was booted.
+**Supported Distributions:**
+- Fedora 38, 39, 40+
+- RHEL 8.x, 9.x, 10.x
+- Rocky Linux 8.x, 9.x, 10.x
+- AlmaLinux 8.x, 9.x, 10.x
+- CentOS Stream 8, 9, 10
+
+**Note on Fedora CoreOS:** Fedora CoreOS uses Ignition for configuration, not traditional kickstart. See the [Fedora CoreOS Support](#fedora-coreos-support) section below for provisioning guidance.
+
+**Note on Atomic Host:** The old Atomic Host kickstart templates (Fedora/CentOS/RHEL Atomic) have been **removed** as Atomic Host has been discontinued. For container-optimized systems, use Fedora CoreOS or RHEL CoreOS instead.
 
 ### Snippets
 
@@ -28,11 +29,9 @@ Our initial work with Atomic kickstarts was performed by manually installing eac
 
 #### Kickstart Counterparts
 
-As mentioned above, all [kickstarts](https://github.com/FlossWare/cobbler/tree/master/kickstarts) call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/master/snippets).  The job of these snippets is to set variables (where appropriate) and coordinate assembly of the [kickstart](http://cobbler.github.io/manuals/2.6.0/3/5_-_Kickstart_Templating.html) result as a whole.  The names correspond to the type of distro you are installing:
-* [centos_atomic_kickstart](https://github.com/FlossWare/cobbler/blob/master/snippets/centos_atomic_kickstart)
-* [fedora_atomic_kickstart](https://github.com/FlossWare/cobbler/blob/master/snippets/fedora_atomic_kickstart)
-* [rhel_atomic_kickstart](https://github.com/FlossWare/cobbler/blob/master/snippets/rhel_atomic_kickstart)
-* [standard_kickstart](https://github.com/FlossWare/cobbler/blob/master/snippets/standard_kickstart)
+As mentioned above, all [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templates) call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/master/snippets).  The job of these snippets is to set variables (where appropriate) and coordinate assembly of the [kickstart](http://cobbler.github.io/manuals/2.6.0/3/5_-_Kickstart_Templating.html) result as a whole:
+
+* [standard_kickstart](https://github.com/FlossWare/cobbler/blob/master/snippets/standard_kickstart): For Fedora, RHEL 8/9/10, and derivatives
 
 #### Options
 
@@ -61,6 +60,93 @@ lang en_US
 
 *Please note we are investigating using [Cheetah defs](http://pythonhosted.org/Cheetah/users_guide/inheritanceEtc.html#def), per [issue #18](https://github.com/FlossWare/cobbler/issues/18), as a replacement for modules.*
 
+### Fedora CoreOS Support
+
+Fedora CoreOS uses [Ignition](https://coreos.github.io/ignition/) for system configuration instead of traditional kickstart/Anaconda. To provision Fedora CoreOS with Cobbler:
+
+1. Create an Ignition configuration using [Butane](https://coreos.github.io/butane/) (formerly Fedora CoreOS Config)
+2. Serve the Ignition file via HTTP from your Cobbler server
+3. Configure Cobbler to pass the Ignition URL via kernel parameters:
+
+```bash
+cobbler system edit --name=fcos-node1 \
+    --kopts="ignition.config.url=http://cobbler.example.com/ignition/node1.ign"
+```
+
+For more information, see the [Fedora CoreOS documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/) on creating Ignition configurations.
+
+**Important:** Fedora CoreOS uses a fundamentally different provisioning model than traditional kickstart. The kickstart templates in this project do not apply to Fedora CoreOS.
+
+### Migration Guide
+
+#### Upgrading from Atomic Host
+
+**Atomic Host (Fedora/CentOS/RHEL Atomic) has been discontinued** and replaced by:
+- **Fedora CoreOS**: For Fedora-based container-optimized systems
+- **RHEL CoreOS**: For OpenShift/RHEL-based container systems (primarily for OpenShift)
+
+If you were using the old `flossware_*_atomic.ks` templates:
+
+1. **For Fedora CoreOS**: Use Ignition configuration (see [Fedora CoreOS Support](#fedora-coreos-support) above)
+2. **For standard RHEL/Fedora workloads**: Use `flossware_standard.ks` which now supports RHEL 8/9/10 and Fedora 38+
+
+#### Service Management Changes
+
+The kickstarts have been updated to use modern `systemctl` commands instead of deprecated `chkconfig` (removed in Fedora 38+ and not present in RHEL 10):
+
+**Old behavior** (chkconfig - hardcoded, disabled NetworkManager):
+```bash
+# NetworkManager was always disabled
+# network service was always enabled
+```
+
+**New behavior** (systemctl - configurable):
+```bash
+# NetworkManager is now enabled by default (modern standard)
+# To use legacy network service instead:
+ksmeta='useNetworkManager="false"'
+```
+
+#### Authentication Configuration
+
+The `authconfig` tool has been removed in RHEL 9+ and Fedora, replaced with `authselect`. The kickstart now automatically detects and uses the appropriate tool:
+
+**Backward compatible usage:**
+```bash
+ksmeta='authconfig="--enablesssd --enablesssdauth"'
+# Automatically uses authselect on RHEL 9/10/Fedora or authconfig on RHEL 8
+```
+
+The kickstart will:
+- Check for `authselect` first (RHEL 9/10, Fedora 38+)
+- Fall back to `authconfig` if available (RHEL 8, older systems)
+- Your existing `authconfig` ksmeta parameters continue to work
+
+**Note:** RHEL 10 only has `authselect` available; `authconfig` has been completely removed.
+
+#### Modprobe Configuration
+
+Configuration now uses `/etc/modprobe.d/` directory instead of deprecated `/etc/modprobe.conf`:
+
+```bash
+# maxLoop configuration now creates /etc/modprobe.d/loop.conf
+ksmeta='maxLoop="64"'
+```
+
+#### RHEL 10 Compatibility
+
+**RHEL 10 is now GA** and fully supported. All modernizations in this project are compatible with RHEL 10:
+
+- ✅ **systemctl**: RHEL 10 uses systemd (chkconfig is not available)
+- ✅ **authselect**: RHEL 10 only includes authselect; authconfig has been removed
+- ✅ **NetworkManager**: Default network management tool in RHEL 10
+- ✅ **modprobe.d**: Standard configuration location
+- ✅ **DNF5**: RHEL 10 uses DNF5 by default (kickstart repo syntax unchanged)
+
+The kickstart templates will work without modification on RHEL 10, Rocky Linux 10, AlmaLinux 10, and CentOS Stream 10.
+
+**Tested with:** RHEL 10 GA and derivatives. No code changes required from RHEL 9 kickstarts.
+
 #### Sections
 
 [Section snippets](https://github.com/FlossWare/cobbler/tree/master/snippets/sections) correspond to sections in kickstarts like [package](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-packages), [pre](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-preinstall), [post](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-postinstall) and [add ons](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/sect-kickstart-syntax.html#sect-kickstart-addon).  To define values on [sections](https://github.com/FlossWare/cobbler/tree/master/snippets/sections):
@@ -78,27 +164,67 @@ Clone this git repo and:
 * create a ```/var/lib/cobbler/snippets/flossware``` directory.
 * copy the contents of [snippets](https://github.com/FlossWare/cobbler/tree/master/snippets) to ```/var/lib/cobbler/snippets/flossware```.
 
-#### Yum 
+#### DNF/Yum Install
 
-To yum install, you will need to enable the FlossWare cobbler yum repo by performing one of the following:
+To install via DNF/Yum, enable the FlossWare Cobbler repository from packagecloud.io:
 
-* Get the repo file:  ```wget https://bintray.com/flossware/rpm/rpm -O bintray-flossware-rpm.repo```
-* Create the ```/etc/yum.repos.d/bintray-flossware-rpm.repo``` file as:
+**Quick setup script:**
+```bash
+curl -s https://packagecloud.io/install/repositories/flossware/cobbler/script.rpm.sh | sudo bash
+sudo dnf install flossware-cobbler
 ```
-#bintraybintray-flossware-rpm - packages by flossware from Bintray
-[bintraybintray-flossware-rpm]
-name=bintray-flossware-rpm
-baseurl=https://dl.bintray.com/flossware/rpm
+
+**Manual setup:**
+
+For RHEL/Rocky/AlmaLinux/CentOS:
+```bash
+# Create repo file
+sudo tee /etc/yum.repos.d/flossware-cobbler.repo <<EOF
+[flossware-cobbler]
+name=FlossWare Cobbler Repository
+baseurl=https://packagecloud.io/flossware/cobbler/el/\$releasever/\$basearch
+repo_gpgcheck=1
 gpgcheck=0
-repo_gpgcheck=0
 enabled=1
+gpgkey=https://packagecloud.io/flossware/cobbler/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+EOF
+
+sudo dnf install flossware-cobbler
 ```
 
-Once the repo file exists, execute:  ```yum install flossware-cobbler```
+For Fedora:
+```bash
+# Create repo file
+sudo tee /etc/yum.repos.d/flossware-cobbler.repo <<EOF
+[flossware-cobbler]
+name=FlossWare Cobbler Repository
+baseurl=https://packagecloud.io/flossware/cobbler/fedora/\$releasever/\$basearch
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/flossware/cobbler/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+EOF
+
+sudo dnf install flossware-cobbler
+```
 
 ### Default Use
 
-By default, the [kickstarts](https://github.com/FlossWare/cobbler/tree/master/kickstarts) and [snippets](https://github.com/FlossWare/cobbler/tree/master/snippets) can be used upon deployment with no additions to ```ksmeta```.  The only caveat is your installed bare metal or VMs will use the root password ```cobbler```.
+By default, the [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templates) and [snippets](https://github.com/FlossWare/cobbler/tree/master/snippets) can be used upon deployment with no additions to ```ksmeta```.
+
+**Default behavior:**
+- Root password: `cobbler` (you should change this!)
+- NetworkManager: Enabled (modern default for RHEL 8/9/10/Fedora)
+- SSH: Enabled
+- Authentication: System defaults
+
+**To customize, use ksmeta variables** (see examples below).
 
 ### Define the Root Password
 
@@ -108,6 +234,16 @@ By default, the [kickstarts](https://github.com/FlossWare/cobbler/tree/master/ki
 ### Layout LVM partitions
 
 Simply provide a space or comma separated list of the disks to use in the partition as a ```ksmeta``` variable ```lvmDisks```.  As an example assume you wish to use ```sda```, ```sdc``` and ```sdd```:   ```ksmeta='lvmDisks="sda sdc sdd"'```
+
+### Use Legacy Network Service
+
+By default, NetworkManager is enabled (modern standard for RHEL 8/9/10 and Fedora 38+). To use the legacy network service instead:
+
+```bash
+ksmeta='useNetworkManager="false"'
+```
+
+This will enable the `network` service and disable NetworkManager.
 
 ## Examples
 
