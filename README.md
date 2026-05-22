@@ -13,11 +13,17 @@ All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templa
 * [flossware_standard.ks](https://github.com/FlossWare/cobbler/blob/master/templates/flossware_standard.ks): Standard kickstart template for modern Linux distributions.
 
 **Supported Distributions:**
+
+*Red Hat Family (Kickstart):*
 - Fedora 38, 39, 40+
 - RHEL 8.x, 9.x, 10.x
 - Rocky Linux 8.x, 9.x, 10.x
 - AlmaLinux 8.x, 9.x, 10.x
 - CentOS Stream 8, 9, 10
+
+*Debian Family (Preseed):*
+- Debian 11 (Bullseye), 12 (Bookworm)
+- Ubuntu 22.04 LTS (Jammy), 24.04 LTS (Noble)
 
 **Note on Fedora CoreOS:** Fedora CoreOS uses Ignition for configuration, not traditional kickstart. See the [Fedora CoreOS Support](#fedora-coreos-support) section below for provisioning guidance.
 
@@ -32,6 +38,15 @@ All defined [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templa
 As mentioned above, all [kickstarts](https://github.com/FlossWare/cobbler/tree/master/templates) call a corresponding [snippet](https://github.com/FlossWare/cobbler/tree/master/snippets).  The job of these snippets is to set variables (where appropriate) and coordinate assembly of the [kickstart](http://cobbler.github.io/manuals/2.6.0/3/5_-_Kickstart_Templating.html) result as a whole:
 
 * [standard_kickstart](https://github.com/FlossWare/cobbler/blob/master/snippets/standard_kickstart): For Fedora, RHEL 8/9/10, and derivatives
+
+#### Preseed Templates
+
+For Debian and Ubuntu installations, preseed templates are available:
+
+* [flossware_ubuntu.preseed](https://github.com/FlossWare/cobbler/blob/master/preseed/flossware_ubuntu.preseed): For Ubuntu 22.04 LTS and 24.04 LTS
+* [flossware_debian.preseed](https://github.com/FlossWare/cobbler/blob/master/preseed/flossware_debian.preseed): For Debian 11 (Bullseye) and 12 (Bookworm)
+
+Preseed files use Debian Installer (d-i) syntax and are fundamentally different from kickstart templates.
 
 #### Options
 
@@ -76,6 +91,100 @@ cobbler system edit --name=fcos-node1 \
 For more information, see the [Fedora CoreOS documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/) on creating Ignition configurations.
 
 **Important:** Fedora CoreOS uses a fundamentally different provisioning model than traditional kickstart. The kickstart templates in this project do not apply to Fedora CoreOS.
+
+### Ubuntu/Debian Support
+
+Ubuntu and Debian use [preseed](https://wiki.debian.org/DebianInstaller/Preseed) for automated installations. Preseed templates are available in the [preseed directory](https://github.com/FlossWare/cobbler/tree/master/preseed).
+
+#### Setting up Debian/Ubuntu with Cobbler
+
+**1. Import the distribution:**
+```bash
+# Ubuntu 22.04 LTS
+cobbler import --name=ubuntu2204 --path=/mnt/ubuntu-22.04-server
+
+# Ubuntu 24.04 LTS
+cobbler import --name=ubuntu2404 --path=/mnt/ubuntu-24.04-server
+
+# Debian 12
+cobbler import --name=debian12 --path=/mnt/debian-12-amd64
+```
+
+**2. Create a profile using the preseed template:**
+```bash
+# Ubuntu profile
+cobbler profile add \
+    --name=ubuntu-server \
+    --distro=ubuntu2204-x86_64 \
+    --autoinstall=flossware_ubuntu.preseed
+
+# Debian profile
+cobbler profile add \
+    --name=debian-server \
+    --distro=debian12-x86_64 \
+    --autoinstall=flossware_debian.preseed
+```
+
+**3. Customize with autoinstall_meta (preseed variables):**
+```bash
+cobbler profile edit --name=ubuntu-server \
+    --autoinstall-meta="hostname=ubuntu-node1 domain=example.com timezone=America/New_York"
+```
+
+**4. Create a system:**
+```bash
+cobbler system add \
+    --name=ubuntu-node1 \
+    --profile=ubuntu-server \
+    --hostname=ubuntu-node1 \
+    --interface=eth0 \
+    --mac=00:11:22:33:44:55 \
+    --ip-address=192.168.1.100 \
+    --netmask=255.255.255.0 \
+    --gateway=192.168.1.1
+```
+
+#### Preseed Variables
+
+The preseed templates support Cobbler template variables:
+
+- `$hostname` - System hostname
+- `$domain` - Domain name
+- `$timezone` - Timezone (e.g., America/New_York, UTC)
+- `$http_server` - Cobbler server address
+- `$install_source_directory` - Path to installation media
+- `$default_password_crypted` - Root password (crypted)
+
+**Example:** Setting a custom root password:
+```bash
+# Generate crypted password
+PASSWORD=$(mkpasswd -m sha-512 "YourPassword")
+
+# Set in profile
+cobbler profile edit --name=ubuntu-server \
+    --autoinstall-meta="default_password_crypted='${PASSWORD}'"
+```
+
+#### Differences from Kickstart
+
+Preseed templates have some important differences:
+
+- **Syntax**: Uses `d-i` prefix and different command structure
+- **Partitioning**: Uses `partman` instead of kickstart partition directives
+- **Post-install**: Uses `preseed/late_command` instead of `%post` section
+- **Location**: Installed to `/var/lib/cobbler/autoinstall_templates/` (not `/templates/`)
+
+#### Troubleshooting
+
+**Enable preseed debugging:**
+Add to kernel options in Cobbler:
+```bash
+cobbler profile edit --name=ubuntu-server \
+    --kopts="auto=true priority=critical DEBCONF_DEBUG=5"
+```
+
+**View installation logs:**
+During installation, press Alt+F4 to view logs, or check `/var/log/installer/` after installation.
 
 ### Migration Guide
 
@@ -212,6 +321,44 @@ metadata_expire=300
 EOF
 
 sudo dnf install flossware-cobbler
+```
+
+#### APT Install (Debian/Ubuntu)
+
+To install via APT on Debian or Ubuntu systems:
+
+**Quick setup script:**
+```bash
+curl -s https://packagecloud.io/install/repositories/flossware/cobbler/script.deb.sh | sudo bash
+sudo apt-get install flossware-cobbler
+```
+
+**Manual setup:**
+
+For Debian:
+```bash
+# Add packagecloud GPG key
+curl -fsSL https://packagecloud.io/flossware/cobbler/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/flossware-cobbler-archive-keyring.gpg > /dev/null
+
+# Add repository
+echo "deb [signed-by=/usr/share/keyrings/flossware-cobbler-archive-keyring.gpg] https://packagecloud.io/flossware/cobbler/debian/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/flossware-cobbler.list
+
+# Install
+sudo apt-get update
+sudo apt-get install flossware-cobbler
+```
+
+For Ubuntu:
+```bash
+# Add packagecloud GPG key
+curl -fsSL https://packagecloud.io/flossware/cobbler/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/flossware-cobbler-archive-keyring.gpg > /dev/null
+
+# Add repository
+echo "deb [signed-by=/usr/share/keyrings/flossware-cobbler-archive-keyring.gpg] https://packagecloud.io/flossware/cobbler/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/flossware-cobbler.list
+
+# Install
+sudo apt-get update
+sudo apt-get install flossware-cobbler
 ```
 
 ### Default Use

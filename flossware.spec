@@ -22,6 +22,7 @@ A set of kickstarts and snippets for cobbler supporting modern distributions:
 %install
 %{__rm} -rf %{buildroot}
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/templates
+%{__mkdir_p} %{buildroot}/var/lib/cobbler/autoinstall_templates
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/modules
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/modules/disk_partition_types
@@ -31,8 +32,12 @@ A set of kickstarts and snippets for cobbler supporting modern distributions:
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/sections/anaconda_body
 %{__mkdir_p} %{buildroot}/var/lib/cobbler/snippets/flossware/sections/post_body
 
-# Install templates (only standard, atomic variants removed)
+# Install kickstart templates (only standard, atomic variants removed)
 %{__install} -p -m 0755 templates/flossware_standard.ks %{buildroot}/var/lib/cobbler/templates/
+
+# Install preseed templates for Debian/Ubuntu
+%{__install} -p -m 0755 preseed/flossware_ubuntu.preseed %{buildroot}/var/lib/cobbler/autoinstall_templates/
+%{__install} -p -m 0755 preseed/flossware_debian.preseed %{buildroot}/var/lib/cobbler/autoinstall_templates/
 
 # Install kickstart entry point (only standard, atomic variants removed)
 %{__install} -p -m 0755 snippets/standard_kickstart %{buildroot}/var/lib/cobbler/snippets/flossware
@@ -60,15 +65,18 @@ rm -rf %{buildroot}
 
 %files
 %attr(0755, root, root) /var/lib/cobbler/templates
+%attr(0755, root, root) /var/lib/cobbler/autoinstall_templates
 %attr(0755, root, root) /var/lib/cobbler/snippets/flossware
 
 %changelog
-* Thu May 22 2026 Modernization <github-action@noreply.com> 1.0-38
+* Thu May 22 2026 Modernization <github-action@noreply.com> 1.0-40
 - BREAKING: Removed all Atomic Host support (discontinued upstream)
 - Updated to systemctl from deprecated chkconfig (required for RHEL 10)
 - Updated to authselect from deprecated authconfig (RHEL 9/10 compatible)
 - Fixed modprobe configuration to use modprobe.d directory
 - Added support for RHEL 10 and Fedora 40+
+- Added Debian 11/12 and Ubuntu 22.04/24.04 preseed templates
+- Switched deployment from baltorepo.com to packagecloud.io
 - Modernized GitHub Actions workflow and build script
 - Cleaned up deprecated spec file tags (Group, BuildRoot)
 - Removed destructive pre-install hook

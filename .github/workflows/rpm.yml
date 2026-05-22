@@ -69,6 +69,14 @@ jobs:
                   package_cloud push flossware/cobbler/fedora/39 "${RPM_FILE}"
                   package_cloud push flossware/cobbler/fedora/40 "${RPM_FILE}"
 
+                  # Push to Debian repos
+                  package_cloud push flossware/cobbler/debian/bullseye "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/debian/bookworm "${RPM_FILE}"
+
+                  # Push to Ubuntu repos
+                  package_cloud push flossware/cobbler/ubuntu/jammy "${RPM_FILE}"
+                  package_cloud push flossware/cobbler/ubuntu/noble "${RPM_FILE}"
+
                   echo "Successfully deployed to packagecloud.io"
 
             - name: Commit version bump
