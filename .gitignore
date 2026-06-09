@@ -1,1 +1,3 @@
-dist
+dist*.log
+logs/
+.claude
