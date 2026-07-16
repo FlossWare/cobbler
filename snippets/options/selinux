@@ -16,4 +16,4 @@
 ##
 
 # SELinux configuration
-selinux --$getVar('selinux', 'disabled')
+selinux $getVar('selinux', '--disabled')

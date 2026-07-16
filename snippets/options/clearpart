@@ -16,4 +16,4 @@
 ##
 
 # Clear our disk partions...
-clearpart --$getVar('clearpart', 'all')
+clearpart $getVar('clearpart', '--all')
